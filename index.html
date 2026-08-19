@@ -1,0 +1,3039 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#B7410E">
+<title>MandalSetu | मंडळसेतू</title>
+<style>
+/* ========================================================================
+   MandalSetu — Design Tokens
+   Palette drawn from Ganeshotsav visual language:
+   - Shendur/sindoor red-orange (idol pigment) as primary
+   - Deep peacock teal as secondary (traditional mandap drapery)
+   - Old brass/gold for financial emphasis
+   - Warm turmeric cream as the paper-like base surface
+   ======================================================================== */
+:root{
+  --shendur:#C8500F;
+  --shendur-dark:#9E3D09;
+  --shendur-light:#F0824A;
+  --peacock:#0D5C63;
+  --peacock-dark:#083F44;
+  --brass:#B8860B;
+  --brass-light:#E0AC3B;
+  --cream:#FBF3E7;
+  --cream-2:#F3E6D0;
+  --paper:#FFFDF8;
+  --ink:#2A1B12;
+  --ink-soft:#5B4636;
+  --line:#E4D3B8;
+  --ok:#2E7D4F;
+  --ok-bg:#E4F3E9;
+  --danger:#B23A2E;
+  --danger-bg:#FBE7E3;
+  --warn:#B8860B;
+  --warn-bg:#FBF0DA;
+  --radius-s:10px;
+  --radius-m:16px;
+  --radius-l:22px;
+  --shadow-1:0 1px 3px rgba(42,27,18,.08), 0 1px 2px rgba(42,27,18,.06);
+  --shadow-2:0 8px 24px rgba(42,27,18,.12);
+  --font-display: "Poppins","Segoe UI",Roboto,system-ui,sans-serif;
+  --font-body: "Segoe UI",Roboto,"Noto Sans",system-ui,-apple-system,sans-serif;
+  --font-mono: "Consolas","Menlo",monospace;
+  --safe-top: env(safe-area-inset-top,0px);
+  --safe-bottom: env(safe-area-inset-bottom,0px);
+}
+[data-theme="dark"]{
+  --shendur:#E27A3F;
+  --shendur-dark:#B7592A;
+  --shendur-light:#F4A26C;
+  --peacock:#3AA6A0;
+  --peacock-dark:#1D7A76;
+  --brass:#E0AC3B;
+  --brass-light:#F0C868;
+  --cream:#1B140F;
+  --cream-2:#241B14;
+  --paper:#221A14;
+  --ink:#F3E9DC;
+  --ink-soft:#C9B8A4;
+  --line:#3A2C20;
+  --ok:#5FD18B;
+  --ok-bg:#173322;
+  --danger:#F0776A;
+  --danger-bg:#3A1D18;
+  --warn:#F0C868;
+  --warn-bg:#332815;
+  --shadow-1:0 1px 3px rgba(0,0,0,.35);
+  --shadow-2:0 10px 28px rgba(0,0,0,.5);
+}
+*,*::before,*::after{box-sizing:border-box;}
+html,body{height:100%;}
+body{
+  margin:0;
+  background:var(--cream);
+  color:var(--ink);
+  font-family:var(--font-body);
+  -webkit-tap-highlight-color:transparent;
+  overscroll-behavior-y:none;
+  transition:background .25s ease,color .25s ease;
+}
+h1,h2,h3,h4{font-family:var(--font-display);margin:0;letter-spacing:.2px;}
+p{margin:0;}
+button{font-family:inherit;}
+input,select,textarea{font-family:inherit;}
+::selection{background:var(--shendur-light);color:#fff;}
+a{color:inherit;}
+
+/* subtle modak/rangoli dot texture on cream background */
+.bg-texture{
+  position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.5;
+  background-image:
+    radial-gradient(circle at 12% 8%, var(--cream-2) 0 2px, transparent 2px),
+    radial-gradient(circle at 68% 22%, var(--cream-2) 0 2px, transparent 2px),
+    radial-gradient(circle at 40% 60%, var(--cream-2) 0 2px, transparent 2px),
+    radial-gradient(circle at 88% 78%, var(--cream-2) 0 2px, transparent 2px);
+  background-size:120px 120px;
+}
+
+#app{position:relative;z-index:1;max-width:560px;margin:0 auto;min-height:100vh;display:flex;flex-direction:column;}
+
+/* ---------- Top App Bar ---------- */
+.appbar{
+  position:sticky;top:0;z-index:40;
+  padding:calc(14px + var(--safe-top)) 16px 14px;
+  background:linear-gradient(135deg,var(--shendur-dark),var(--shendur));
+  color:#fff;
+  box-shadow:var(--shadow-1);
+  display:flex;align-items:center;gap:12px;
+}
+.appbar h1{font-size:18px;font-weight:700;}
+.appbar .sub{font-size:11.5px;opacity:.85;margin-top:1px;}
+.appbar .spacer{flex:1;}
+.appbar-btn{
+  background:rgba(255,255,255,.16);border:none;color:#fff;width:38px;height:38px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;font-size:18px;cursor:pointer;
+}
+.appbar-btn:active{background:rgba(255,255,255,.3);}
+.modak-icon{font-size:22px;line-height:1;filter:drop-shadow(0 1px 1px rgba(0,0,0,.2));}
+
+/* ---------- Screens ---------- */
+.screens{flex:1;padding:14px 14px calc(96px + var(--safe-bottom));}
+.screen{display:none;animation:fadeUp .22s ease;}
+.screen.active{display:block;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+
+/* ---------- Cards ---------- */
+.card{
+  background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-m);
+  padding:16px;box-shadow:var(--shadow-1);margin-bottom:12px;
+}
+.card-title{font-size:13px;font-weight:700;color:var(--ink-soft);text-transform:uppercase;letter-spacing:.6px;margin-bottom:10px;}
+
+/* ---------- Dashboard stat grid ---------- */
+.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;}
+.stat-card{
+  border-radius:var(--radius-m);padding:14px;color:#fff;position:relative;overflow:hidden;
+  box-shadow:var(--shadow-1);min-height:92px;display:flex;flex-direction:column;justify-content:space-between;
+}
+.stat-card .label{font-size:11.5px;opacity:.92;font-weight:600;}
+.stat-card .value{font-size:20px;font-weight:800;font-family:var(--font-display);}
+.stat-card.collect{background:linear-gradient(135deg,var(--peacock-dark),var(--peacock));}
+.stat-card.expense{background:linear-gradient(135deg,#8C3A2A,var(--shendur));}
+.stat-card.balance{background:linear-gradient(135deg,#8A6A00,var(--brass));}
+.stat-card.pending{background:linear-gradient(135deg,#5B4636,#8A6A55);}
+.stat-card .icon{position:absolute;right:8px;top:8px;font-size:26px;opacity:.35;}
+
+.mini-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:12px;}
+.mini-stat{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-s);padding:10px;text-align:center;}
+.mini-stat .n{font-size:17px;font-weight:800;color:var(--shendur-dark);}
+.mini-stat .l{font-size:10.5px;color:var(--ink-soft);margin-top:2px;}
+
+.quick-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;}
+.qa-btn{
+  background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-m);padding:14px 10px;
+  display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;box-shadow:var(--shadow-1);
+  font-weight:700;font-size:12.5px;color:var(--ink);
+}
+.qa-btn .qi{font-size:22px;}
+.qa-btn:active{transform:scale(.97);}
+
+/* ---------- Section header ---------- */
+.section-head{display:flex;align-items:center;justify-content:space-between;margin:4px 0 10px;}
+.section-head h2{font-size:16px;}
+.section-head .link{font-size:12.5px;color:var(--shendur-dark);font-weight:700;cursor:pointer;}
+
+/* ---------- List rows ---------- */
+.list-row{
+  display:flex;align-items:center;gap:12px;background:var(--paper);border:1px solid var(--line);
+  border-radius:var(--radius-s);padding:12px;margin-bottom:8px;cursor:pointer;
+}
+.list-row:active{background:var(--cream-2);}
+.row-avatar{
+  width:40px;height:40px;border-radius:50%;background:var(--cream-2);color:var(--shendur-dark);
+  display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;flex-shrink:0;
+  border:1px solid var(--line);
+}
+.row-main{flex:1;min-width:0;}
+.row-title{font-weight:700;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.row-sub{font-size:12px;color:var(--ink-soft);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.row-end{text-align:right;flex-shrink:0;}
+.row-amt{font-weight:800;font-size:14.5px;color:var(--ok);}
+.row-amt.neg{color:var(--danger);}
+.row-time{font-size:10.5px;color:var(--ink-soft);margin-top:2px;}
+.badge{display:inline-block;font-size:10px;font-weight:800;padding:2px 7px;border-radius:20px;letter-spacing:.3px;}
+.badge.ok{background:var(--ok-bg);color:var(--ok);}
+.badge.danger{background:var(--danger-bg);color:var(--danger);}
+.badge.warn{background:var(--warn-bg);color:var(--warn);}
+.badge.info{background:var(--cream-2);color:var(--ink-soft);}
+
+/* ---------- Empty states ---------- */
+.empty-state{text-align:center;padding:44px 20px;color:var(--ink-soft);}
+.empty-state .ei{font-size:40px;margin-bottom:10px;opacity:.6;}
+.empty-state .et{font-weight:700;color:var(--ink);margin-bottom:4px;}
+.empty-state .es{font-size:13px;margin-bottom:16px;}
+
+/* ---------- Buttons ---------- */
+.btn{
+  border:none;border-radius:var(--radius-s);padding:13px 18px;font-weight:700;font-size:14.5px;
+  cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  transition:transform .1s ease;width:100%;
+}
+.btn:active{transform:scale(.98);}
+.btn-primary{background:linear-gradient(135deg,var(--shendur-dark),var(--shendur));color:#fff;box-shadow:0 4px 12px rgba(200,80,15,.3);}
+.btn-secondary{background:var(--paper);color:var(--peacock-dark);border:1.5px solid var(--peacock);}
+.btn-outline{background:transparent;color:var(--ink);border:1.5px solid var(--line);}
+.btn-danger{background:var(--danger-bg);color:var(--danger);border:1.5px solid var(--danger);}
+.btn-brass{background:linear-gradient(135deg,#8A6A00,var(--brass));color:#fff;}
+.btn-sm{padding:8px 12px;font-size:12.5px;width:auto;}
+.btn-block-row{display:flex;gap:10px;}
+.btn-block-row .btn{flex:1;}
+.btn[disabled]{opacity:.5;cursor:not-allowed;}
+.fab{
+  position:fixed;z-index:35;right:calc(50% - 264px);bottom:calc(88px + var(--safe-bottom));
+  width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,var(--shendur-dark),var(--shendur));
+  color:#fff;font-size:26px;border:none;box-shadow:0 6px 18px rgba(200,80,15,.45);cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+}
+@media(max-width:600px){.fab{right:18px;}}
+
+/* ---------- Forms ---------- */
+.field{margin-bottom:14px;}
+.field label{display:block;font-size:12.5px;font-weight:700;color:var(--ink-soft);margin-bottom:6px;}
+.field .hint{font-size:11px;color:var(--ink-soft);margin-top:4px;}
+.field .err{font-size:11.5px;color:var(--danger);margin-top:4px;font-weight:600;display:none;}
+.field.invalid .err{display:block;}
+.field.invalid input,.field.invalid select,.field.invalid textarea{border-color:var(--danger)!important;}
+input[type=text],input[type=number],input[type=tel],input[type=date],input[type=time],input[type=password],select,textarea{
+  width:100%;padding:12px 13px;border-radius:var(--radius-s);border:1.5px solid var(--line);
+  background:var(--paper);color:var(--ink);font-size:14.5px;outline:none;
+}
+input:focus,select:focus,textarea:focus{border-color:var(--shendur);}
+textarea{resize:vertical;min-height:70px;}
+.seg{display:flex;background:var(--cream-2);border-radius:var(--radius-s);padding:4px;gap:4px;}
+.seg button{flex:1;border:none;background:transparent;padding:10px 6px;border-radius:8px;font-weight:700;font-size:13px;color:var(--ink-soft);cursor:pointer;}
+.seg button.active{background:var(--paper);color:var(--shendur-dark);box-shadow:var(--shadow-1);}
+.chip-group{display:flex;flex-wrap:wrap;gap:8px;}
+.chip{padding:9px 14px;border-radius:20px;border:1.5px solid var(--line);background:var(--paper);font-size:12.5px;font-weight:700;cursor:pointer;color:var(--ink-soft);}
+.chip.active{background:var(--shendur);border-color:var(--shendur);color:#fff;}
+.pin-dots{display:flex;justify-content:center;gap:14px;margin:22px 0;}
+.pin-dot{width:16px;height:16px;border-radius:50%;border:2px solid var(--shendur);background:transparent;}
+.pin-dot.filled{background:var(--shendur);}
+.pin-pad{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;max-width:280px;margin:0 auto;}
+.pin-key{padding:18px;border-radius:16px;background:var(--paper);border:1px solid var(--line);font-size:20px;font-weight:700;cursor:pointer;box-shadow:var(--shadow-1);}
+.pin-key:active{background:var(--cream-2);}
+.pin-key.fn{background:transparent;box-shadow:none;border:none;color:var(--ink-soft);}
+
+/* ---------- Bottom Nav ---------- */
+.bottom-nav{
+  position:fixed;bottom:0;left:0;right:0;z-index:40;max-width:560px;margin:0 auto;
+  background:var(--paper);border-top:1px solid var(--line);
+  display:flex;padding:6px 2px calc(6px + var(--safe-bottom));
+  box-shadow:0 -4px 16px rgba(0,0,0,.06);
+}
+.nav-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 2px;border:none;background:transparent;cursor:pointer;color:var(--ink-soft);}
+.nav-item .ni{font-size:19px;}
+.nav-item .nl{font-size:9.5px;font-weight:700;}
+.nav-item.active{color:var(--shendur-dark);}
+.nav-item.active .ni{transform:translateY(-1px);}
+
+/* ---------- Modal / Sheet ---------- */
+.overlay{position:fixed;inset:0;background:rgba(20,12,6,.5);z-index:60;display:none;align-items:flex-end;justify-content:center;}
+.overlay.active{display:flex;}
+.sheet{
+  background:var(--cream);width:100%;max-width:560px;max-height:92vh;overflow-y:auto;
+  border-radius:22px 22px 0 0;padding:18px 16px calc(20px + var(--safe-bottom));
+  animation:slideUp .25s ease;
+}
+@keyframes slideUp{from{transform:translateY(100%);}to{transform:translateY(0);}}
+.sheet-handle{width:40px;height:4px;background:var(--line);border-radius:4px;margin:0 auto 14px;}
+.sheet-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
+.sheet-head h3{font-size:16.5px;}
+.sheet-close{background:var(--cream-2);border:none;width:32px;height:32px;border-radius:50%;font-size:16px;cursor:pointer;color:var(--ink-soft);}
+
+.overlay.center{align-items:center;padding:20px;}
+.dialog{background:var(--paper);border-radius:var(--radius-l);padding:22px;max-width:400px;width:100%;box-shadow:var(--shadow-2);animation:popIn .2s ease;}
+@keyframes popIn{from{opacity:0;transform:scale(.94);}to{opacity:1;transform:scale(1);}}
+.dialog h3{font-size:16.5px;margin-bottom:8px;}
+.dialog p{font-size:13.5px;color:var(--ink-soft);line-height:1.5;}
+.dialog .dicon{font-size:34px;margin-bottom:10px;}
+
+/* ---------- Toast ---------- */
+.toast-wrap{position:fixed;top:calc(10px + var(--safe-top));left:0;right:0;z-index:80;display:flex;flex-direction:column;align-items:center;gap:8px;pointer-events:none;}
+.toast{background:var(--ink);color:var(--cream);padding:11px 18px;border-radius:30px;font-size:13px;font-weight:600;box-shadow:var(--shadow-2);animation:toastIn .25s ease;max-width:88%;text-align:center;}
+.toast.err{background:var(--danger);}
+.toast.ok{background:var(--ok);}
+@keyframes toastIn{from{opacity:0;transform:translateY(-10px);}to{opacity:1;transform:translateY(0);}}
+
+/* ---------- Misc ---------- */
+.hr{height:1px;background:var(--line);margin:14px 0;}
+.muted{color:var(--ink-soft);font-size:12.5px;}
+.right{text-align:right;}
+.center{text-align:center;}
+.flex-between{display:flex;align-items:center;justify-content:space-between;}
+.tag-list{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;}
+.receipt-paper{
+  background:var(--paper);border:1px dashed var(--brass);border-radius:var(--radius-m);padding:20px;
+  font-family:var(--font-mono);position:relative;
+}
+.receipt-paper .rtitle{text-align:center;font-family:var(--font-display);font-weight:800;font-size:17px;color:var(--shendur-dark);}
+.receipt-paper .rsub{text-align:center;font-size:11.5px;color:var(--ink-soft);margin-bottom:14px;}
+.receipt-row{display:flex;justify-content:space-between;font-size:13px;padding:5px 0;border-bottom:1px dashed var(--line);}
+.receipt-row .k{color:var(--ink-soft);}
+.receipt-amt{text-align:center;font-size:26px;font-weight:800;color:var(--ok);margin:14px 0;font-family:var(--font-display);}
+.watermark-stamp{
+  position:absolute;top:14px;right:14px;border:3px solid var(--danger);color:var(--danger);
+  padding:4px 10px;font-weight:800;font-size:13px;border-radius:6px;transform:rotate(12deg);opacity:.85;
+}
+.edited-flag{color:var(--warn);font-size:11px;font-weight:800;}
+.audit-item{border-left:3px solid var(--peacock);padding:6px 0 6px 12px;margin-bottom:8px;}
+.audit-item .a-action{font-weight:700;font-size:13px;}
+.audit-item .a-meta{font-size:11px;color:var(--ink-soft);}
+.diff-box{background:var(--cream-2);border-radius:8px;padding:8px 10px;font-size:12px;margin-top:6px;}
+.diff-box .old{color:var(--danger);text-decoration:line-through;}
+.diff-box .new{color:var(--ok);font-weight:700;}
+
+.lock-screen{position:fixed;inset:0;background:linear-gradient(160deg,var(--shendur-dark),var(--peacock-dark));z-index:100;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff;padding:20px;}
+.lock-screen .li{font-size:52px;margin-bottom:6px;}
+.lock-screen h2{font-size:20px;margin-bottom:2px;}
+.lock-screen .sub{opacity:.85;font-size:13px;margin-bottom:6px;}
+.lock-screen .pin-dot{border-color:#fff;}
+.lock-screen .pin-dot.filled{background:#fff;}
+.lock-screen .pin-key{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);color:#fff;}
+.lock-screen .pin-key.fn{color:rgba(255,255,255,.8);}
+
+.switch{position:relative;display:inline-block;width:44px;height:26px;flex-shrink:0;}
+.switch input{opacity:0;width:0;height:0;}
+.switch .slider{position:absolute;cursor:pointer;inset:0;background:var(--line);border-radius:30px;transition:.2s;}
+.switch .slider:before{content:"";position:absolute;height:20px;width:20px;left:3px;bottom:3px;background:#fff;border-radius:50%;transition:.2s;}
+.switch input:checked + .slider{background:var(--shendur);}
+.switch input:checked + .slider:before{transform:translateX(18px);}
+
+.settings-row{display:flex;align-items:center;gap:12px;padding:13px 4px;border-bottom:1px solid var(--line);cursor:pointer;}
+.settings-row:last-child{border-bottom:none;}
+.settings-row .si{font-size:19px;width:26px;text-align:center;}
+.settings-row .st{flex:1;font-weight:600;font-size:14px;}
+.settings-row .ss{font-size:11.5px;color:var(--ink-soft);}
+.settings-row .sarrow{color:var(--ink-soft);}
+
+table.report-table{width:100%;border-collapse:collapse;font-size:12px;}
+table.report-table th{background:var(--cream-2);padding:8px 6px;text-align:left;font-size:11px;color:var(--ink-soft);}
+table.report-table td{padding:8px 6px;border-bottom:1px solid var(--line);}
+
+.role-badge{display:inline-block;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:800;background:var(--cream-2);color:var(--shendur-dark);border:1px solid var(--line);}
+
+.loading-screen{position:fixed;inset:0;background:var(--cream);z-index:200;display:flex;flex-direction:column;align-items:center;justify-content:center;}
+.loading-screen .lg{font-size:60px;animation:spinSlow 2.4s linear infinite;}
+@keyframes spinSlow{from{transform:rotate(0);}to{transform:rotate(360deg);}}
+
+@media(prefers-reduced-motion:reduce){*{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important;}}
+
+.search-bar{display:flex;align-items:center;gap:8px;background:var(--paper);border:1.5px solid var(--line);border-radius:var(--radius-s);padding:10px 12px;margin-bottom:12px;}
+.search-bar input{border:none;padding:0;flex:1;background:transparent;}
+.search-bar .sic{color:var(--ink-soft);}
+.filter-row{display:flex;gap:8px;overflow-x:auto;margin-bottom:12px;padding-bottom:2px;}
+.filter-row::-webkit-scrollbar{display:none;}
+
+/* ---------------------------- Calculator ---------------------------- */
+.calc-dialog{max-width:380px;width:100%;padding:0;overflow:hidden;}
+.calc-header{
+  display:flex;align-items:center;justify-content:space-between;padding:14px 16px;
+  background:linear-gradient(135deg,var(--peacock-dark),var(--peacock));color:#fff;font-weight:700;font-size:14.5px;
+}
+.calc-screen{padding:18px 16px 10px;text-align:right;background:var(--paper);}
+.calc-expr{font-size:13px;color:var(--ink-soft);min-height:18px;font-family:var(--font-mono);}
+.calc-display{font-size:34px;font-weight:800;font-family:var(--font-display);color:var(--ink);word-break:break-all;}
+.calc-history-panel{max-height:110px;overflow-y:auto;background:var(--cream-2);padding:6px 14px;border-top:1px solid var(--line);border-bottom:1px solid var(--line);}
+.calc-hist-row{display:flex;justify-content:space-between;font-size:11.5px;padding:4px 0;color:var(--ink-soft);font-family:var(--font-mono);}
+.calc-hist-row .ch-res{font-weight:700;color:var(--ink);}
+.calc-pad{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);}
+.calc-btn{
+  border:none;background:var(--paper);color:var(--ink);font-size:19px;font-weight:700;padding:16px 0;cursor:pointer;
+}
+.calc-btn:active{background:var(--cream-2);}
+.calc-btn.calc-fn{background:var(--cream-2);color:var(--shendur-dark);}
+.calc-btn.calc-op{background:var(--cream-2);color:var(--peacock-dark);font-size:21px;}
+.calc-btn.calc-eq{background:linear-gradient(135deg,var(--shendur-dark),var(--shendur));color:#fff;grid-column:span 1;}
+
+.print-only{display:none;}
+@media print{
+  body *{visibility:hidden;}
+  #printArea, #printArea *{visibility:visible;}
+  #printArea{position:absolute;top:0;left:0;width:100%;padding:20px;}
+  .print-only{display:block;}
+}
+</style>
+</head>
+<body>
+<div class="bg-texture"></div>
+<div id="toastWrap" class="toast-wrap"></div>
+
+<div id="app"></div>
+<div id="overlayRoot"></div>
+<div id="printArea" style="display:none;"></div>
+
+<script>
+'use strict';
+/* ============================================================================
+   MandalSetu — Offline Ganesh Mandal Management App
+   Single-file, offline-first, IndexedDB-backed. No network calls anywhere.
+   ============================================================================ */
+
+/* ---------------------------- I18N ---------------------------- */
+const I18N = {
+  en:{
+    appName:"MandalSetu", tagline:"Ganesh Mandal Manager",
+    dashboard:"Dashboard", vargani:"Vargani", receipts:"Receipts", expenses:"Expenses",
+    members:"Members", events:"Events", reports:"Reports", settings:"Settings",
+    totalCollected:"Total Vargani Collected", totalExpenses:"Total Expenses",
+    currentBalance:"Current Balance", pendingVargani:"Pending Vargani",
+    totalMembers:"Members", totalReceipts:"Receipts", cancelledReceipts:"Cancelled",
+    recentTransactions:"Recent Transactions", upcomingEvents:"Upcoming Events",
+    addVargani:"Add Vargani", addExpense:"Add Expense", addMember:"Add Member",
+    viewReports:"Reports", seeAll:"See all", noVargani:"No Vargani records yet.",
+    noExpenses:"No expenses recorded.", noEvents:"No upcoming events.",
+    noMembers:"No members added yet.", noReceipts:"No receipts yet.",
+    save:"Save", cancel:"Cancel", edit:"Edit", delete:"Delete", close:"Close",
+    confirm:"Confirm", back:"Back", search:"Search...", filter:"Filter",
+    donorName:"Donor Name", mobile:"Mobile Number", address:"Address / Shop Name",
+    amount:"Amount (₹)", paymentMethod:"Payment Method", date:"Date", time:"Time",
+    collectedBy:"Collected By", notes:"Notes", receiptNo:"Receipt No.",
+    cash:"Cash", upi:"UPI", other:"Other",
+    saveVargani:"Save Vargani & Generate Receipt",
+    print:"Print", exportPdf:"Export PDF", share:"Share", viewReceipt:"View Receipt",
+    editReceipt:"Edit Receipt", cancelReceipt:"Cancel Receipt", editHistory:"Edit History",
+    cancelled:"CANCELLED", edited:"Edited", reason:"Reason",
+    category:"Category", description:"Description", vendor:"Vendor / Person",
+    addedBy:"Added By", saveExpense:"Save Expense",
+    memberName:"Name", role:"Role", joinDate:"Join Date", active:"Active", inactive:"Inactive",
+    eventName:"Event Name", startTime:"Start Time", endTime:"End Time", location:"Location",
+    responsible:"Responsible Person", status:"Status", saveEvent:"Save Event",
+    collectionReport:"Collection Report", expenseReport:"Expense Report",
+    financialReport:"Complete Financial Report", memberList:"Member List",
+    backup:"Backup Data", restore:"Restore Data", exportAll:"Export All Data",
+    importData:"Import Data", mandalProfile:"Mandal Profile", language:"Language",
+    theme:"Theme", pinSecurity:"PIN Security", autoLock:"Auto Lock",
+    resetAllData:"Reset All Data", about:"About", dataManagement:"Data Management",
+    required:"This field is required", invalidAmount:"Enter a valid amount greater than 0",
+    welcome:"गणपती बाप्पा मोरया!", createMandal:"Create Your Mandal",
+    mandalName:"Mandal Name", village:"Village / Area", district:"District",
+    ganeshYear:"Ganeshotsav Year", president:"President Name", vicePresident:"Vice President Name",
+    secretary:"Secretary Name", treasurer:"Treasurer Name",
+    getStarted:"Get Started", setPin:"Set a Security PIN", confirmPin:"Confirm PIN",
+    enterPin:"Enter PIN to unlock", wrongPin:"Incorrect PIN, try again",
+    selectRole:"Select Your Role", login:"Unlock", offlineNotice:"Offline Mode: Each device stores its own data. Use Backup & Restore to transfer the latest data between authorized devices.",
+  },
+  mr:{
+    appName:"मंडळसेतू", tagline:"गणेश मंडळ व्यवस्थापक",
+    dashboard:"डॅशबोर्ड", vargani:"वर्गणी", receipts:"पावत्या", expenses:"खर्च",
+    members:"सदस्य", events:"कार्यक्रम", reports:"अहवाल", settings:"सेटिंग्ज",
+    totalCollected:"एकूण जमा वर्गणी", totalExpenses:"एकूण खर्च",
+    currentBalance:"सध्याची शिल्लक", pendingVargani:"प्रलंबित वर्गणी",
+    totalMembers:"सदस्य", totalReceipts:"पावत्या", cancelledReceipts:"रद्द",
+    recentTransactions:"अलीकडील व्यवहार", upcomingEvents:"आगामी कार्यक्रम",
+    addVargani:"वर्गणी जोडा", addExpense:"खर्च जोडा", addMember:"सदस्य जोडा",
+    viewReports:"अहवाल", seeAll:"सर्व पहा", noVargani:"अद्याप वर्गणी नोंद नाही.",
+    noExpenses:"अद्याप खर्च नोंदवलेला नाही.", noEvents:"आगामी कार्यक्रम नाहीत.",
+    noMembers:"अद्याप सदस्य जोडलेले नाहीत.", noReceipts:"अद्याप पावत्या नाहीत.",
+    save:"जतन करा", cancel:"रद्द करा", edit:"संपादित करा", delete:"हटवा", close:"बंद करा",
+    confirm:"पुष्टी करा", back:"मागे", search:"शोधा...", filter:"फिल्टर",
+    donorName:"देणगीदाराचे नाव", mobile:"मोबाईल नंबर", address:"पत्ता / दुकानाचे नाव",
+    amount:"रक्कम (₹)", paymentMethod:"भरणा पद्धत", date:"तारीख", time:"वेळ",
+    collectedBy:"संकलक", notes:"टीप", receiptNo:"पावती क्र.",
+    cash:"रोख", upi:"यूपीआय", other:"इतर",
+    saveVargani:"वर्गणी जतन करा आणि पावती तयार करा",
+    print:"प्रिंट", exportPdf:"PDF निर्यात", share:"शेअर करा", viewReceipt:"पावती पहा",
+    editReceipt:"पावती संपादित करा", cancelReceipt:"पावती रद्द करा", editHistory:"संपादन इतिहास",
+    cancelled:"रद्द केले", edited:"संपादित", reason:"कारण",
+    category:"श्रेणी", description:"वर्णन", vendor:"विक्रेता / व्यक्ती",
+    addedBy:"जोडणारा", saveExpense:"खर्च जतन करा",
+    memberName:"नाव", role:"भूमिका", joinDate:"सामील तारीख", active:"सक्रिय", inactive:"निष्क्रिय",
+    eventName:"कार्यक्रमाचे नाव", startTime:"सुरुवात वेळ", endTime:"शेवट वेळ", location:"ठिकाण",
+    responsible:"जबाबदार व्यक्ती", status:"स्थिती", saveEvent:"कार्यक्रम जतन करा",
+    collectionReport:"संकलन अहवाल", expenseReport:"खर्च अहवाल",
+    financialReport:"संपूर्ण आर्थिक अहवाल", memberList:"सदस्य यादी",
+    backup:"बॅकअप घ्या", restore:"पुनर्संचयित करा", exportAll:"सर्व डेटा निर्यात करा",
+    importData:"डेटा आयात करा", mandalProfile:"मंडळ प्रोफाइल", language:"भाषा",
+    theme:"थीम", pinSecurity:"पिन सुरक्षा", autoLock:"ऑटो लॉक",
+    resetAllData:"सर्व डेटा रीसेट करा", about:"बद्दल", dataManagement:"डेटा व्यवस्थापन",
+    required:"हे फील्ड आवश्यक आहे", invalidAmount:"वैध रक्कम टाका (०  पेक्षा जास्त)",
+    welcome:"गणपती बाप्पा मोरया!", createMandal:"तुमचे मंडळ तयार करा",
+    mandalName:"मंडळाचे नाव", village:"गाव / परिसर", district:"जिल्हा",
+    ganeshYear:"गणेशोत्सव वर्ष", president:"अध्यक्षांचे नाव", vicePresident:"उपाध्यक्षांचे नाव",
+    secretary:"सचिवांचे नाव", treasurer:"खजिनदारांचे नाव",
+    getStarted:"सुरु करा", setPin:"सुरक्षा पिन सेट करा", confirmPin:"पिनची पुष्टी करा",
+    enterPin:"अनलॉक करण्यासाठी पिन टाका", wrongPin:"चुकीचा पिन, पुन्हा प्रयत्न करा",
+    selectRole:"तुमची भूमिका निवडा", login:"अनलॉक करा", offlineNotice:"ऑफलाइन मोड: प्रत्येक डिव्हाइस स्वतःचा डेटा साठवते. डेटा हस्तांतरित करण्यासाठी बॅकअप आणि रिस्टोअर वापरा.",
+  }
+};
+function t(key){ const l = STATE.lang || 'en'; return (I18N[l] && I18N[l][key]) || I18N.en[key] || key; }
+
+/* ---------------------------- CONSTANTS ---------------------------- */
+const DB_NAME = 'MandalSetuDB';
+const DB_VERSION = 2; // v2: added calcHistory store (additive — existing stores/data are preserved)
+const STORES = ['mandal','users','members','receipts','expenses','events','auditLogs','settings','calcHistory'];
+const EXPENSE_CATEGORIES = ['Decoration','Ganpati Idol','Sound','Lights','Prasad','Cultural Program','Mandap','Transport','Visarjan','Pooja Material','Other'];
+const EVENT_TYPES = ['Aarti','Mahaprasad','Cultural Program','Blood Donation Camp','Sports','Bhajan','Visarjan','Other'];
+const ROLES = ['President','Vice President','Secretary','Treasurer','Volunteer','Member'];
+const ROLE_PERMISSIONS = {
+  'President': {all:true},
+  'Vice President': {view:['dashboard','vargani','receipts','expenses','members','events','reports'], manage:['events','members']},
+  'Treasurer': {view:['dashboard','vargani','receipts','expenses','reports'], manage:['vargani','receipts','expenses','reports']},
+  'Secretary': {view:['dashboard','members','events'], manage:['members','events']},
+  'Volunteer': {view:['dashboard','vargani','members','events'], manage:['vargani']},
+  'Member': {view:['dashboard','events'], manage:[]}
+};
+function hasAccess(section){
+  const role = STATE.currentUser ? STATE.currentUser.role : 'Member';
+  const perm = ROLE_PERMISSIONS[role];
+  if(!perm) return false;
+  if(perm.all) return true;
+  return perm.view.includes(section);
+}
+function canManage(section){
+  const role = STATE.currentUser ? STATE.currentUser.role : 'Member';
+  const perm = ROLE_PERMISSIONS[role];
+  if(!perm) return false;
+  if(perm.all) return true;
+  return perm.manage.includes(section);
+}
+/* SECURITY-CRITICAL: server-less "authorization gate" for President-only actions.
+   This must be called INSIDE every sensitive function (not just used to hide buttons),
+   so that even a directly-invoked function call is rejected for non-President users. */
+function requirePresident(actionLabel){
+  const ok = !!(STATE.currentUser && STATE.currentUser.role === 'President');
+  if(!ok){
+    toast('You do not have permission to perform this action.', 'err');
+    logAudit('Unauthorized attempt', '', {
+      action: actionLabel || 'unknown',
+      user: STATE.currentUser ? STATE.currentUser.name : 'Unknown',
+      role: STATE.currentUser ? STATE.currentUser.role : 'None'
+    });
+  }
+  return ok;
+}
+
+/* ---------------------------- GLOBAL STATE ---------------------------- */
+const STATE = {
+  db:null,
+  mandal:null,
+  currentUser:null,
+  lang:'en',
+  theme:'light',
+  autoLockMinutes:5,
+  locked:false,
+  lastActivity:Date.now(),
+  cache:{ members:[], receipts:[], expenses:[], events:[], auditLogs:[], users:[], calcHistory:[] },
+  nav:'dashboard',
+  pinBuffer:'',
+  pinMode:null, // 'set'|'confirm'|'unlock'|'change-old'|'change-new'
+  pendingPin:null,
+  editingId:null,
+  filters:{ vargani:{q:'',method:'',from:'',to:''}, expenses:{q:'',cat:'',from:'',to:''} },
+  // Brute-force protection state (persisted to IndexedDB 'settings' store so a reload can't bypass it)
+  security:{ failedAttempts:0, lockoutUntil:0, lockoutStage:0 },
+  lockoutIntervalId:null
+};
+
+/* ---------------------------- IndexedDB LAYER ---------------------------- */
+function openDatabase(){
+  return new Promise((resolve,reject)=>{
+    const req = indexedDB.open(DB_NAME, DB_VERSION);
+    req.onupgradeneeded = (e)=>{
+      const db = e.target.result;
+      if(!db.objectStoreNames.contains('mandal')) db.createObjectStore('mandal',{keyPath:'id'});
+      if(!db.objectStoreNames.contains('users')) db.createObjectStore('users',{keyPath:'id'});
+      if(!db.objectStoreNames.contains('members')) db.createObjectStore('members',{keyPath:'id'});
+      if(!db.objectStoreNames.contains('receipts')){
+        const s = db.createObjectStore('receipts',{keyPath:'id'});
+        s.createIndex('receiptNo','receiptNo',{unique:true});
+        s.createIndex('donorName','donorName',{unique:false});
+        s.createIndex('mobile','mobile',{unique:false});
+      }
+      if(!db.objectStoreNames.contains('expenses')){
+        const s = db.createObjectStore('expenses',{keyPath:'id'});
+        s.createIndex('expenseCode','expenseCode',{unique:true});
+      }
+      if(!db.objectStoreNames.contains('events')) db.createObjectStore('events',{keyPath:'id'});
+      if(!db.objectStoreNames.contains('auditLogs')) db.createObjectStore('auditLogs',{keyPath:'id'});
+      if(!db.objectStoreNames.contains('settings')) db.createObjectStore('settings',{keyPath:'id'});
+      if(!db.objectStoreNames.contains('calcHistory')){
+        const s = db.createObjectStore('calcHistory',{keyPath:'id'});
+        s.createIndex('ts','ts',{unique:false});
+      }
+    };
+    req.onsuccess = (e)=>resolve(e.target.result);
+    req.onerror = (e)=>reject(e.target.error);
+  });
+}
+function tx(storeName, mode='readonly'){
+  return STATE.db.transaction(storeName, mode).objectStore(storeName);
+}
+function dbGetAll(storeName){
+  return new Promise((resolve,reject)=>{
+    const req = tx(storeName).getAll();
+    req.onsuccess = ()=>resolve(req.result || []);
+    req.onerror = ()=>reject(req.error);
+  });
+}
+function dbGet(storeName, id){
+  return new Promise((resolve,reject)=>{
+    const req = tx(storeName).get(id);
+    req.onsuccess = ()=>resolve(req.result || null);
+    req.onerror = ()=>reject(req.error);
+  });
+}
+function dbPut(storeName, obj){
+  return new Promise((resolve,reject)=>{
+    const req = tx(storeName,'readwrite').put(obj);
+    req.onsuccess = ()=>resolve(obj);
+    req.onerror = ()=>reject(req.error);
+  });
+}
+function dbDelete(storeName, id){
+  return new Promise((resolve,reject)=>{
+    const req = tx(storeName,'readwrite').delete(id);
+    req.onsuccess = ()=>resolve(true);
+    req.onerror = ()=>reject(req.error);
+  });
+}
+function dbClear(storeName){
+  return new Promise((resolve,reject)=>{
+    const req = tx(storeName,'readwrite').clear();
+    req.onsuccess = ()=>resolve(true);
+    req.onerror = ()=>reject(req.error);
+  });
+}
+
+/* ---------------------------- UTILS ---------------------------- */
+function uid(prefix){
+  return (prefix?prefix+'_':'') + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2,9);
+}
+function fmtCurrency(n){
+  n = Number(n)||0;
+  const neg = n<0; n = Math.abs(n);
+  let s = n.toFixed(0);
+  // Indian digit grouping
+  let lastThree = s.substring(s.length-3);
+  let other = s.substring(0, s.length-3);
+  if(other !== '') lastThree = ',' + lastThree;
+  const formatted = other.replace(/\B(?=(\d{2})+(?!\d))/g, ",") + lastThree;
+  return (neg?'-':'') + '₹' + formatted;
+}
+function fmtDate(d){
+  if(!d) return '';
+  const dt = (d instanceof Date) ? d : new Date(d);
+  if(isNaN(dt)) return d;
+  const dd = String(dt.getDate()).padStart(2,'0');
+  const mm = String(dt.getMonth()+1).padStart(2,'0');
+  return `${dd}/${mm}/${dt.getFullYear()}`;
+}
+function fmtTime(t){
+  if(!t) return '';
+  return t;
+}
+function todayISO(){
+  const d = new Date();
+  return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+}
+function nowTimeStr(){
+  const d = new Date();
+  return String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');
+}
+function nowStamp(){
+  return { date: todayISO(), time: nowTimeStr(), ts: Date.now() };
+}
+function escapeHtml(s){
+  if(s===undefined||s===null) return '';
+  return String(s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+function initials(name){
+  if(!name) return '?';
+  const parts = name.trim().split(/\s+/);
+  return ((parts[0]?.[0]||'') + (parts[1]?.[0]||'')).toUpperCase();
+}
+function toast(msg, type){
+  const wrap = document.getElementById('toastWrap');
+  const el = document.createElement('div');
+  el.className = 'toast' + (type?(' '+type):'');
+  el.textContent = msg;
+  wrap.appendChild(el);
+  setTimeout(()=>{ el.style.opacity='0'; el.style.transition='opacity .3s'; setTimeout(()=>el.remove(),300); }, 2400);
+}
+async function sha256Hex(str){
+  const enc = new TextEncoder().encode(str);
+  const buf = await crypto.subtle.digest('SHA-256', enc);
+  return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+}
+function debounce(fn, ms){
+  let h; return (...args)=>{ clearTimeout(h); h = setTimeout(()=>fn(...args), ms); };
+}
+
+/* ---------------------------- AUDIT LOG ---------------------------- */
+async function logAudit(action, recordId, extra){
+  const stamp = nowStamp();
+  const entry = {
+    id: uid('log'),
+    action, recordId: recordId||'',
+    user: STATE.currentUser ? STATE.currentUser.name : 'System',
+    role: STATE.currentUser ? STATE.currentUser.role : '',
+    date: stamp.date, time: stamp.time, ts: stamp.ts,
+    extra: extra || null
+  };
+  await dbPut('auditLogs', entry);
+  STATE.cache.auditLogs.unshift(entry);
+  return entry;
+}
+
+/* ---------------------------- RECEIPT / EXPENSE NUMBERING ---------------------------- */
+function nextReceiptNumber(){
+  const year = STATE.mandal ? STATE.mandal.year : new Date().getFullYear();
+  const existing = STATE.cache.receipts.filter(r => r.receiptNo && r.receiptNo.includes('GM-'+year+'-'));
+  let max = 0;
+  existing.forEach(r=>{
+    const parts = r.receiptNo.split('-');
+    const n = parseInt(parts[parts.length-1], 10);
+    if(!isNaN(n) && n>max) max = n;
+  });
+  const next = max + 1;
+  return 'GM-'+year+'-'+String(next).padStart(4,'0');
+}
+function nextExpenseCode(){
+  const year = STATE.mandal ? STATE.mandal.year : new Date().getFullYear();
+  const existing = STATE.cache.expenses.filter(e => e.expenseCode && e.expenseCode.includes('EX-'+year+'-'));
+  let max = 0;
+  existing.forEach(e=>{
+    const parts = e.expenseCode.split('-');
+    const n = parseInt(parts[parts.length-1], 10);
+    if(!isNaN(n) && n>max) max = n;
+  });
+  const next = max + 1;
+  return 'EX-'+year+'-'+String(next).padStart(4,'0');
+}
+
+/* ---------------------------- FINANCIAL CALCULATIONS ---------------------------- */
+function calcTotals(){
+  const validReceipts = STATE.cache.receipts.filter(r=>r.status!=='cancelled');
+  const cancelledReceipts = STATE.cache.receipts.filter(r=>r.status==='cancelled');
+  const validExpenses = STATE.cache.expenses.filter(e=>e.status!=='cancelled');
+  const cancelledExpenses = STATE.cache.expenses.filter(e=>e.status==='cancelled');
+  const totalCollected = validReceipts.reduce((s,r)=>s+Number(r.amount||0),0);
+  const totalExpenses = validExpenses.reduce((s,e)=>s+Number(e.amount||0),0);
+  const balance = totalCollected - totalExpenses;
+  const pending = STATE.mandal && STATE.mandal.pledgedTotal ? Math.max(0, Number(STATE.mandal.pledgedTotal) - totalCollected) : 0;
+  return {
+    totalCollected, totalExpenses, balance, pending,
+    validReceipts, cancelledReceipts, validExpenses, cancelledExpenses,
+    receiptCount: STATE.cache.receipts.length,
+    cancelledReceiptCount: cancelledReceipts.length
+  };
+}
+
+/* ---------------------------- ENCRYPTION (Backup) ---------------------------- */
+async function deriveKey(password, salt){
+  const enc = new TextEncoder();
+  const keyMaterial = await crypto.subtle.importKey('raw', enc.encode(password), {name:'PBKDF2'}, false, ['deriveKey']);
+  return crypto.subtle.deriveKey(
+    { name:'PBKDF2', salt, iterations:150000, hash:'SHA-256' },
+    keyMaterial, { name:'AES-GCM', length:256 }, false, ['encrypt','decrypt']
+  );
+}
+function bufToB64(buf){
+  return btoa(String.fromCharCode(...new Uint8Array(buf)));
+}
+function b64ToBuf(b64){
+  const bin = atob(b64);
+  const arr = new Uint8Array(bin.length);
+  for(let i=0;i<bin.length;i++) arr[i]=bin.charCodeAt(i);
+  return arr.buffer;
+}
+async function encryptBackup(jsonStr, password){
+  const salt = crypto.getRandomValues(new Uint8Array(16));
+  const iv = crypto.getRandomValues(new Uint8Array(12));
+  const key = await deriveKey(password, salt);
+  const enc = new TextEncoder().encode(jsonStr);
+  const cipher = await crypto.subtle.encrypt({name:'AES-GCM', iv}, key, enc);
+  return {
+    encrypted:true, version:1,
+    salt: bufToB64(salt), iv: bufToB64(iv), data: bufToB64(cipher)
+  };
+}
+async function decryptBackup(payload, password){
+  const salt = new Uint8Array(b64ToBuf(payload.salt));
+  const iv = new Uint8Array(b64ToBuf(payload.iv));
+  const key = await deriveKey(password, salt);
+  const cipherBuf = b64ToBuf(payload.data);
+  const plainBuf = await crypto.subtle.decrypt({name:'AES-GCM', iv}, key, cipherBuf);
+  return new TextDecoder().decode(plainBuf);
+}
+
+/* ---------------------------- LOAD DATA ---------------------------- */
+async function loadAllData(){
+  const [mandals, users, members, receipts, expenses, events, auditLogs, calcHistoryRows] = await Promise.all([
+    dbGetAll('mandal'), dbGetAll('users'), dbGetAll('members'), dbGetAll('receipts'),
+    dbGetAll('expenses'), dbGetAll('events'), dbGetAll('auditLogs'), dbGetAll('calcHistory')
+  ]);
+  STATE.mandal = mandals[0] || null;
+  STATE.cache.users = users;
+  STATE.cache.members = members.sort((a,b)=>(a.name||'').localeCompare(b.name||''));
+  STATE.cache.receipts = receipts.sort((a,b)=>(b.ts||0)-(a.ts||0));
+  STATE.cache.expenses = expenses.sort((a,b)=>(b.ts||0)-(a.ts||0));
+  STATE.cache.events = events.sort((a,b)=> new Date(a.date+'T'+(a.startTime||'00:00')) - new Date(b.date+'T'+(b.startTime||'00:00')));
+  STATE.cache.auditLogs = auditLogs.sort((a,b)=>(b.ts||0)-(a.ts||0));
+  STATE.cache.calcHistory = calcHistoryRows.sort((a,b)=>(b.ts||0)-(a.ts||0)).slice(0,50);
+  // NOTE: 'settings' store holds multiple rows (app-settings, security-state) —
+  // always fetch by id, never assume getAll()[0] is the right row.
+  const settings = await dbGet('settings','app-settings');
+  if(settings){
+    STATE.lang = settings.lang || 'en';
+    STATE.theme = settings.theme || 'light';
+    STATE.autoLockMinutes = settings.autoLockMinutes ?? 5;
+  }
+  const secRow = await dbGet('settings','security-state');
+  STATE.security = secRow
+    ? { failedAttempts: secRow.failedAttempts||0, lockoutUntil: secRow.lockoutUntil||0, lockoutStage: secRow.lockoutStage||0 }
+    : { failedAttempts:0, lockoutUntil:0, lockoutStage:0 };
+}
+async function saveSettings(){
+  await dbPut('settings', { id:'app-settings', lang: STATE.lang, theme: STATE.theme, autoLockMinutes: STATE.autoLockMinutes });
+}
+/* ---------------------------- BRUTE-FORCE PROTECTION ---------------------------- */
+const LOCKOUT_BASE_SECONDS = 30;
+const LOCKOUT_MAX_SECONDS = 600; // cap progressive lockout at 10 minutes
+async function saveSecurityState(){
+  await dbPut('settings', { id:'security-state', ...STATE.security });
+}
+function isLockedOut(){ return STATE.security.lockoutUntil > Date.now(); }
+function lockoutRemainingSeconds(){ return Math.max(0, Math.ceil((STATE.security.lockoutUntil - Date.now())/1000)); }
+async function registerFailedAttempt(){
+  STATE.security.failedAttempts++;
+  // Every 5th consecutive failure triggers a lockout with progressively longer duration
+  if(STATE.security.failedAttempts % 5 === 0){
+    STATE.security.lockoutStage++;
+    const secs = Math.min(LOCKOUT_MAX_SECONDS, LOCKOUT_BASE_SECONDS * Math.pow(2, STATE.security.lockoutStage-1));
+    STATE.security.lockoutUntil = Date.now() + secs*1000;
+  }
+  await saveSecurityState();
+}
+async function registerSuccessfulLogin(){
+  STATE.security = { failedAttempts:0, lockoutUntil:0, lockoutStage:0 };
+  await saveSecurityState();
+}
+
+/* ---------------------------- BACKUP / RESTORE / EXPORT ---------------------------- */
+async function buildBackupObject(){
+  return {
+    app:'MandalSetu', formatVersion:1, exportedAt: new Date().toISOString(),
+    mandal: STATE.mandal, users: STATE.cache.users, members: STATE.cache.members,
+    receipts: STATE.cache.receipts, expenses: STATE.cache.expenses, events: STATE.cache.events,
+    auditLogs: STATE.cache.auditLogs,
+    settings: { lang: STATE.lang, theme: STATE.theme, autoLockMinutes: STATE.autoLockMinutes }
+  };
+}
+function downloadFile(filename, content, mime){
+  const blob = new Blob([content], {type: mime || 'application/octet-stream'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  setTimeout(()=>URL.revokeObjectURL(url), 2000);
+}
+async function doBackup(password){
+  const obj = await buildBackupObject();
+  const json = JSON.stringify(obj);
+  const dateTag = todayISO();
+  let outContent, filename;
+  if(password){
+    const enc = await encryptBackup(json, password);
+    outContent = JSON.stringify(enc);
+    filename = `MandalSetu_Backup_${dateTag}.mset`;
+  } else {
+    outContent = JSON.stringify({encrypted:false, version:1, payload: obj});
+    filename = `MandalSetu_Backup_${dateTag}.mset`;
+  }
+  downloadFile(filename, outContent, 'application/json');
+  await logAudit('Backup created', '', {encrypted: !!password});
+  return filename;
+}
+async function doExportAll(){
+  // PART 5: raw/plain export is an advanced, President-only action, and must never leak PIN hashes.
+  if(!requirePresident('export all data')) return;
+  const obj = await buildBackupObject();
+  const sanitized = { ...obj, users: (obj.users||[]).map(u=>({ id:u.id, name:u.name, role:u.role })) };
+  downloadFile(`MandalSetu_Export_${todayISO()}.json`, JSON.stringify(sanitized, null, 2), 'application/json');
+  await logAudit('Settings changed', '', {action:'Advanced data exported (President)'});
+  toast('Data exported (PIN data excluded for safety)', 'ok');
+}
+
+/* Validate the shape of a decrypted/parsed backup payload BEFORE touching the database.
+   Returns null if valid, or a human-readable error string if not. */
+function validateBackupPayload(payload){
+  if(!payload || typeof payload !== 'object') return 'This file is not a valid MandalSetu backup.';
+  if(!payload.mandal || typeof payload.mandal !== 'object' || !payload.mandal.name) return 'Backup is missing mandal information.';
+  const arrayFields = ['members','receipts','expenses','events','users','auditLogs'];
+  for(const key of arrayFields){
+    if(payload[key] !== undefined && !Array.isArray(payload[key])) return `Backup data for "${key}" is invalid or corrupted.`;
+  }
+  return null;
+}
+
+/* Read + decrypt + structurally validate a backup file WITHOUT modifying any existing data.
+   Throws Error('PASSWORD_REQUIRED') if the file is encrypted and no password was supplied. */
+async function readAndValidateBackup(fileText, password){
+  let outer;
+  try{ outer = JSON.parse(fileText); }
+  catch(e){ throw new Error('This file is not a valid MandalSetu backup (invalid JSON).'); }
+  let payload;
+  if(outer.encrypted){
+    if(!password) throw new Error('PASSWORD_REQUIRED');
+    let plain;
+    try{ plain = await decryptBackup(outer, password); }
+    catch(e){ throw new Error('Incorrect password, or the backup file is corrupted.'); }
+    try{ payload = JSON.parse(plain); }
+    catch(e){ throw new Error('Backup content could not be read after decryption.'); }
+  } else {
+    payload = outer.payload || outer;
+  }
+  const err = validateBackupPayload(payload);
+  if(err) throw new Error(err);
+  return payload;
+}
+
+/* Atomic, all-store restore using a SINGLE IndexedDB transaction: either every store is
+   replaced together, or (on any error) the transaction aborts and NOTHING changes. This
+   guarantees existing data is never left half-cleared/half-written. */
+function restoreFromPayloadAtomic(payload){
+  return new Promise((resolve, reject)=>{
+    const storesToUse = ['mandal','users','members','receipts','expenses','events','auditLogs'];
+    let txn;
+    try{ txn = STATE.db.transaction(storesToUse, 'readwrite'); }
+    catch(e){ reject(e); return; }
+    txn.oncomplete = ()=>resolve();
+    txn.onerror = ()=>reject(txn.error || new Error('Restore failed. Your existing data has not been changed.'));
+    txn.onabort = ()=>reject(txn.error || new Error('Restore failed. Your existing data has not been changed.'));
+    try{
+      storesToUse.forEach(s=>txn.objectStore(s).clear());
+      if(payload.mandal) txn.objectStore('mandal').put(payload.mandal);
+      (payload.users||[]).forEach(u=>txn.objectStore('users').put(u));
+      (payload.members||[]).forEach(m=>txn.objectStore('members').put(m));
+      (payload.receipts||[]).forEach(r=>txn.objectStore('receipts').put(r));
+      (payload.expenses||[]).forEach(e=>txn.objectStore('expenses').put(e));
+      (payload.events||[]).forEach(ev=>txn.objectStore('events').put(ev));
+      (payload.auditLogs||[]).forEach(a=>txn.objectStore('auditLogs').put(a));
+    }catch(e){
+      try{ txn.abort(); }catch(_e){}
+      reject(e);
+    }
+  });
+}
+async function restoreFromPayload(payload){
+  // Safety net: if the incoming backup's user list is missing PIN hashes (e.g. a sanitized
+  // President-only export), keep the CURRENT device's user accounts so nobody gets locked out.
+  const usersLookComplete = payload.users && payload.users.length && payload.users.every(u=>u.pinHash);
+  const effectivePayload = { ...payload, users: usersLookComplete ? payload.users : STATE.cache.users };
+  await restoreFromPayloadAtomic(effectivePayload);
+  if(payload.settings){
+    STATE.lang = payload.settings.lang || STATE.lang;
+    STATE.theme = payload.settings.theme || STATE.theme;
+    STATE.autoLockMinutes = payload.settings.autoLockMinutes ?? STATE.autoLockMinutes;
+    await saveSettings();
+  }
+  await loadAllData();
+}
+/* Downloads an automatic, unencrypted safety copy of the CURRENT data before a destructive
+   restore proceeds — so the previous state is always recoverable even after confirming restore. */
+async function createEmergencyBackup(){
+  try{
+    const obj = await buildBackupObject();
+    downloadFile(`MandalSetu_EmergencyBackup_${todayISO()}_${Date.now()}.json`, JSON.stringify(obj), 'application/json');
+    await logAudit('Backup created', '', {type:'automatic-pre-restore-safety-copy'});
+  }catch(e){ console.error('Emergency backup failed', e); }
+}
+/* Full guarded restore: auto safety-backup -> atomic write -> audit log.
+   If restoreFromPayloadAtomic throws, current data is guaranteed untouched (see above). */
+async function applyRestore(payload){
+  await createEmergencyBackup();
+  try{
+    await restoreFromPayload(payload);
+  }catch(e){
+    throw new Error('Restore failed. Your existing data has not been changed.');
+  }
+  await logAudit('Backup restored', '', {mandal: payload.mandal ? payload.mandal.name : ''});
+}
+
+/* ---------------------------- VALIDATION ---------------------------- */
+function validateRequired(val){ return val !== undefined && val !== null && String(val).trim() !== ''; }
+function validateAmount(val){ const n = Number(val); return !isNaN(n) && n > 0; }
+function validateMobile(val){ if(!val) return true; return /^[0-9]{10}$/.test(String(val).trim()); }
+function isDuplicateReceiptNo(no, excludeId){
+  return STATE.cache.receipts.some(r => r.receiptNo === no && r.id !== excludeId);
+}
+
+/* ---------------------------- OVERLAY / SHEET / DIALOG HELPERS ---------------------------- */
+function openSheet(innerHtml, opts){
+  const root = document.getElementById('overlayRoot');
+  const ov = document.createElement('div');
+  ov.className = 'overlay active';
+  ov.id = 'sheetOverlay';
+  ov.innerHTML = `<div class="sheet">${innerHtml}</div>`;
+  ov.addEventListener('click', (e)=>{ if(e.target === ov && !(opts&&opts.noBackdropClose)) closeSheet(); });
+  root.appendChild(ov);
+  return ov;
+}
+function closeSheet(){
+  const ov = document.getElementById('sheetOverlay');
+  if(ov) ov.remove();
+}
+function openDialog({icon, title, message, buttons}){
+  const root = document.getElementById('overlayRoot');
+  const ov = document.createElement('div');
+  ov.className = 'overlay center active';
+  ov.id = 'dialogOverlay';
+  const btnHtml = buttons.map((b,i)=>`<button class="btn ${b.cls||'btn-outline'}" data-bi="${i}" style="margin-top:8px;">${b.label}</button>`).join('');
+  ov.innerHTML = `<div class="dialog">
+    ${icon?`<div class="dicon">${icon}</div>`:''}
+    <h3>${escapeHtml(title)}</h3>
+    <p>${message}</p>
+    <div style="margin-top:16px;">${btnHtml}</div>
+  </div>`;
+  root.appendChild(ov);
+  buttons.forEach((b,i)=>{
+    ov.querySelector(`[data-bi="${i}"]`).addEventListener('click', ()=>{
+      closeDialog();
+      if(b.action) b.action();
+    });
+  });
+  return ov;
+}
+function closeDialog(){
+  const ov = document.getElementById('dialogOverlay');
+  if(ov) ov.remove();
+}
+function confirmAction(title, message, onConfirm, opts){
+  opts = opts || {};
+  openDialog({
+    icon: opts.icon || '⚠️',
+    title, message,
+    buttons:[
+      {label: t('cancel'), cls:'btn-outline'},
+      {label: opts.confirmLabel || t('confirm'), cls: opts.danger ? 'btn-danger' : 'btn-primary', action:onConfirm}
+    ]
+  });
+}
+
+/* ---------------------------- APP SHELL ---------------------------- */
+const NAV_ITEMS = [
+  {key:'dashboard', icon:'🏠', label:'dashboard'},
+  {key:'vargani', icon:'💰', label:'vargani'},
+  {key:'receipts', icon:'🧾', label:'receipts'},
+  {key:'expenses', icon:'💸', label:'expenses'},
+  {key:'members', icon:'👥', label:'members'},
+  {key:'events', icon:'📅', label:'events'},
+  {key:'reports', icon:'📊', label:'reports'},
+  {key:'settings', icon:'⚙️', label:'settings'},
+];
+// Bottom nav shows a curated 5 items + "More" would complicate mobile; instead we show all 8 in a scrollable nav on wider screens,
+// but per spec we keep the 8-item bottom nav compact for mobile using smaller font & icon.
+function renderShell(){
+  const app = document.getElementById('app');
+  app.innerHTML = `
+    <div class="appbar">
+      <div class="modak-icon">🪔</div>
+      <div>
+        <h1>${escapeHtml(STATE.mandal ? STATE.mandal.name : t('appName'))}</h1>
+        <div class="sub">${STATE.mandal ? (t('ganeshYear')+' '+STATE.mandal.year) : t('tagline')}</div>
+      </div>
+      <div class="spacer"></div>
+      <button class="appbar-btn" id="btnCalc" title="Calculator">🧮</button>
+      <button class="appbar-btn" id="btnLangToggle" title="Language">${STATE.lang==='en'?'अ':'A'}</button>
+      <button class="appbar-btn" id="btnThemeToggle" title="Theme">${STATE.theme==='dark'?'☀️':'🌙'}</button>
+    </div>
+    <div class="screens" id="screens"></div>
+    <button class="fab" id="fabAdd" title="Quick Add">＋</button>
+    <div class="bottom-nav" id="bottomNav"></div>
+  `;
+  renderBottomNav();
+  document.getElementById('btnCalc').addEventListener('click', openCalculator);
+  document.getElementById('btnLangToggle').addEventListener('click', toggleLanguage);
+  document.getElementById('btnThemeToggle').addEventListener('click', toggleTheme);
+  document.getElementById('fabAdd').addEventListener('click', showQuickAddMenu);
+}
+/* Shared toggle helpers (avoid duplicating this logic between appbar buttons and Settings rows) */
+async function toggleLanguage(){
+  STATE.lang = STATE.lang === 'en' ? 'mr' : 'en';
+  await saveSettings();
+  await logAudit('Settings changed', '', {field:'language', value: STATE.lang});
+  renderShell(); navigateTo(STATE.nav);
+}
+async function toggleTheme(){
+  STATE.theme = STATE.theme === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', STATE.theme);
+  await saveSettings();
+  await logAudit('Settings changed', '', {field:'theme', value: STATE.theme});
+  renderShell(); navigateTo(STATE.nav);
+}
+function renderBottomNav(){
+  const nav = document.getElementById('bottomNav');
+  nav.innerHTML = NAV_ITEMS.map(item=>{
+    const visible = hasAccess(item.key) || item.key==='dashboard' || item.key==='settings';
+    if(!visible) return '';
+    return `<button class="nav-item ${STATE.nav===item.key?'active':''}" data-nav="${item.key}">
+      <span class="ni">${item.icon}</span><span class="nl">${t(item.label)}</span>
+    </button>`;
+  }).join('');
+  nav.querySelectorAll('[data-nav]').forEach(btn=>{
+    btn.addEventListener('click', ()=> navigateTo(btn.dataset.nav));
+  });
+}
+function showQuickAddMenu(){
+  openSheet(`
+    <div class="sheet-handle"></div>
+    <div class="sheet-head"><h3>Quick Add</h3><button class="sheet-close" id="qaClose">✕</button></div>
+    <div class="quick-actions" style="margin-bottom:4px;">
+      <div class="qa-btn" id="qaVargani"><span class="qi">💰</span>${t('addVargani')}</div>
+      <div class="qa-btn" id="qaExpense"><span class="qi">💸</span>${t('addExpense')}</div>
+      <div class="qa-btn" id="qaMember"><span class="qi">👥</span>${t('addMember')}</div>
+      <div class="qa-btn" id="qaEvent"><span class="qi">📅</span>${t('eventName')}</div>
+    </div>
+  `);
+  document.getElementById('qaClose').addEventListener('click', closeSheet);
+  document.getElementById('qaVargani').addEventListener('click', ()=>{ closeSheet(); navigateTo('vargani'); openVarganiForm(); });
+  document.getElementById('qaExpense').addEventListener('click', ()=>{ closeSheet(); navigateTo('expenses'); openExpenseForm(); });
+  document.getElementById('qaMember').addEventListener('click', ()=>{ closeSheet(); navigateTo('members'); openMemberForm(); });
+  document.getElementById('qaEvent').addEventListener('click', ()=>{ closeSheet(); navigateTo('events'); openEventForm(); });
+}
+function navigateTo(key){
+  STATE.nav = key;
+  renderBottomNav();
+  const screens = document.getElementById('screens');
+  screens.innerHTML = '<div class="screen active" id="screenContent"></div>';
+  const c = document.getElementById('screenContent');
+  if(!hasAccess(key)){
+    c.innerHTML = emptyState('🔒','Access restricted','You do not have permission to view this section.');
+    return;
+  }
+  switch(key){
+    case 'dashboard': renderDashboard(c); break;
+    case 'vargani': renderVarganiScreen(c); break;
+    case 'receipts': renderReceiptsScreen(c); break;
+    case 'expenses': renderExpensesScreen(c); break;
+    case 'members': renderMembersScreen(c); break;
+    case 'events': renderEventsScreen(c); break;
+    case 'reports': renderReportsScreen(c); break;
+    case 'settings': renderSettingsScreen(c); break;
+    default: renderDashboard(c);
+  }
+  window.scrollTo(0,0);
+}
+function emptyState(icon,title,sub,actionHtml){
+  return `<div class="empty-state"><div class="ei">${icon}</div><div class="et">${escapeHtml(title)}</div><div class="es">${escapeHtml(sub)}</div>${actionHtml||''}</div>`;
+}
+
+/* ---------------------------- DASHBOARD ---------------------------- */
+function renderDashboard(c){
+  const tot = calcTotals();
+  const recent = [...STATE.cache.receipts, ...STATE.cache.expenses.map(e=>({...e, __exp:true}))]
+    .sort((a,b)=>(b.ts||0)-(a.ts||0)).slice(0,6);
+  const upcoming = STATE.cache.events.filter(e=> e.date >= todayISO() && e.status !== 'Completed').slice(0,4);
+
+  c.innerHTML = `
+    <div class="card" style="text-align:center;background:linear-gradient(135deg,var(--peacock-dark),var(--peacock));color:#fff;border:none;">
+      <div style="font-size:26px;margin-bottom:4px;">🙏</div>
+      <div style="font-family:var(--font-display);font-weight:800;font-size:17px;">${t('welcome')}</div>
+    </div>
+
+    <div class="stat-grid">
+      <div class="stat-card collect"><span class="icon">💰</span><div class="label">${t('totalCollected')}</div><div class="value">${fmtCurrency(tot.totalCollected)}</div></div>
+      <div class="stat-card expense"><span class="icon">💸</span><div class="label">${t('totalExpenses')}</div><div class="value">${fmtCurrency(tot.totalExpenses)}</div></div>
+      <div class="stat-card balance"><span class="icon">🏦</span><div class="label">${t('currentBalance')}</div><div class="value">${fmtCurrency(tot.balance)}</div></div>
+      <div class="stat-card pending"><span class="icon">⏳</span><div class="label">${t('pendingVargani')}</div><div class="value">${fmtCurrency(tot.pending)}</div></div>
+    </div>
+
+    <div class="mini-stats">
+      <div class="mini-stat"><div class="n">${STATE.cache.members.length}</div><div class="l">${t('totalMembers')}</div></div>
+      <div class="mini-stat"><div class="n">${tot.receiptCount}</div><div class="l">${t('totalReceipts')}</div></div>
+      <div class="mini-stat"><div class="n">${tot.cancelledReceiptCount}</div><div class="l">${t('cancelledReceipts')}</div></div>
+    </div>
+
+    <div class="quick-actions">
+      <div class="qa-btn" id="dqVargani"><span class="qi">➕💰</span>${t('addVargani')}</div>
+      <div class="qa-btn" id="dqExpense"><span class="qi">➕💸</span>${t('addExpense')}</div>
+      <div class="qa-btn" id="dqMember"><span class="qi">👥</span>${t('addMember')}</div>
+      <div class="qa-btn" id="dqReports"><span class="qi">📊</span>${t('viewReports')}</div>
+      <div class="qa-btn" id="dqCalc"><span class="qi">🧮</span>Calculator</div>
+    </div>
+
+    <div class="section-head"><h2>${t('recentTransactions')}</h2><span class="link" id="seeAllRecent">${t('seeAll')}</span></div>
+    <div id="recentList">
+      ${recent.length ? recent.map(item=>recentRowHtml(item)).join('') : emptyState('🧾', t('noReceipts'), t('noVargani'))}
+    </div>
+
+    <div class="section-head"><h2>${t('upcomingEvents')}</h2><span class="link" id="seeAllEvents">${t('seeAll')}</span></div>
+    <div id="upcomingList">
+      ${upcoming.length ? upcoming.map(ev=>eventRowHtml(ev)).join('') : emptyState('📅', t('noEvents'), '')}
+    </div>
+  `;
+  c.querySelector('#dqVargani').addEventListener('click', ()=>{ navigateTo('vargani'); openVarganiForm(); });
+  c.querySelector('#dqExpense').addEventListener('click', ()=>{ navigateTo('expenses'); openExpenseForm(); });
+  c.querySelector('#dqMember').addEventListener('click', ()=>{ navigateTo('members'); openMemberForm(); });
+  c.querySelector('#dqReports').addEventListener('click', ()=> navigateTo('reports'));
+  c.querySelector('#dqCalc').addEventListener('click', openCalculator);
+  c.querySelector('#seeAllRecent').addEventListener('click', ()=> navigateTo('vargani'));
+  c.querySelector('#seeAllEvents').addEventListener('click', ()=> navigateTo('events'));
+  c.querySelectorAll('[data-open-receipt]').forEach(el=>el.addEventListener('click', ()=>openReceiptView(el.dataset.openReceipt)));
+  c.querySelectorAll('[data-open-expense]').forEach(el=>el.addEventListener('click', ()=>openExpenseView(el.dataset.openExpense)));
+  c.querySelectorAll('[data-open-event]').forEach(el=>el.addEventListener('click', ()=>openEventView(el.dataset.openEvent)));
+}
+function recentRowHtml(item){
+  const isExp = !!item.__exp;
+  const title = isExp ? (item.category||t('expenses')) : (item.donorName || '-');
+  const sub = isExp ? (item.vendor||item.description||'') : (item.receiptNo||'');
+  const amt = isExp ? '-'+fmtCurrency(item.amount) : '+'+fmtCurrency(item.amount);
+  const cancelled = item.status === 'cancelled';
+  return `<div class="list-row" ${isExp?`data-open-expense="${item.id}"`:`data-open-receipt="${item.id}"`}>
+    <div class="row-avatar">${isExp?'💸':'💰'}</div>
+    <div class="row-main">
+      <div class="row-title">${escapeHtml(title)} ${item.edited?'<span class="edited-flag">✎ '+t('edited')+'</span>':''}</div>
+      <div class="row-sub">${escapeHtml(sub)}</div>
+    </div>
+    <div class="row-end">
+      <div class="row-amt ${isExp?'neg':''}" style="${cancelled?'text-decoration:line-through;opacity:.5;color:var(--ink-soft);':''}">${amt}</div>
+      <div class="row-time">${fmtDate(item.date)} ${item.time||''}</div>
+      ${cancelled?`<span class="badge danger">${t('cancelled')}</span>`:''}
+    </div>
+  </div>`;
+}
+function eventRowHtml(ev){
+  return `<div class="list-row" data-open-event="${ev.id}">
+    <div class="row-avatar">📅</div>
+    <div class="row-main">
+      <div class="row-title">${escapeHtml(ev.eventName)}</div>
+      <div class="row-sub">${escapeHtml(ev.location||'')} · ${escapeHtml(ev.responsible||'')}</div>
+    </div>
+    <div class="row-end">
+      <div class="row-time" style="font-weight:700;color:var(--peacock-dark);">${fmtDate(ev.date)}</div>
+      <div class="row-time">${ev.startTime||''}</div>
+    </div>
+  </div>`;
+}
+
+/* ---------------------------- VARGANI SCREEN ---------------------------- */
+function renderVarganiScreen(c){
+  const f = STATE.filters.vargani;
+  let list = [...STATE.cache.receipts];
+  if(f.q){
+    const q = f.q.toLowerCase();
+    list = list.filter(r => (r.donorName||'').toLowerCase().includes(q) || (r.receiptNo||'').toLowerCase().includes(q) || (r.mobile||'').includes(q));
+  }
+  if(f.method) list = list.filter(r=>r.paymentMethod===f.method);
+  if(f.from) list = list.filter(r=>r.date >= f.from);
+  if(f.to) list = list.filter(r=>r.date <= f.to);
+
+  c.innerHTML = `
+    <div class="section-head"><h2>${t('vargani')}</h2></div>
+    <div class="search-bar"><span class="sic">🔎</span><input type="text" id="varSearch" placeholder="${t('search')}" value="${escapeHtml(f.q)}"></div>
+    <div class="filter-row">
+      <span class="chip ${!f.method?'active':''}" data-method="">${t('paymentMethod')}: ${t('other')==='Other'?'All':'All'}</span>
+      <span class="chip ${f.method==='Cash'?'active':''}" data-method="Cash">${t('cash')}</span>
+      <span class="chip ${f.method==='UPI'?'active':''}" data-method="UPI">${t('upi')}</span>
+      <span class="chip ${f.method==='Other'?'active':''}" data-method="Other">${t('other')}</span>
+    </div>
+    ${canManage('vargani') ? `<button class="btn btn-primary" id="btnAddVargani" style="margin-bottom:14px;">➕ ${t('addVargani')}</button>` : ''}
+    <div id="varList">
+      ${list.length ? list.map(r=>varganiRowHtml(r)).join('') : emptyState('💰', t('noVargani'), 'Tap "Add Vargani" to record your first donation.')}
+    </div>
+  `;
+  if(canManage('vargani')) c.querySelector('#btnAddVargani').addEventListener('click', openVarganiForm);
+  c.querySelector('#varSearch').addEventListener('input', debounce(e=>{ STATE.filters.vargani.q = e.target.value; renderVarganiScreen(c); }, 250));
+  c.querySelectorAll('[data-method]').forEach(chip=>chip.addEventListener('click', ()=>{
+    STATE.filters.vargani.method = chip.dataset.method; renderVarganiScreen(c);
+  }));
+  c.querySelectorAll('[data-open-receipt]').forEach(el=>el.addEventListener('click', ()=>openReceiptView(el.dataset.openReceipt)));
+}
+function varganiRowHtml(r){
+  const cancelled = r.status === 'cancelled';
+  return `<div class="list-row" data-open-receipt="${r.id}">
+    <div class="row-avatar">${initials(r.donorName)}</div>
+    <div class="row-main">
+      <div class="row-title">${escapeHtml(r.donorName)} ${r.edited?'<span class="edited-flag">✎</span>':''}</div>
+      <div class="row-sub">${escapeHtml(r.receiptNo)} · ${escapeHtml(r.paymentMethod)}</div>
+    </div>
+    <div class="row-end">
+      <div class="row-amt" style="${cancelled?'text-decoration:line-through;opacity:.5;color:var(--ink-soft);':''}">${fmtCurrency(r.amount)}</div>
+      <div class="row-time">${fmtDate(r.date)}</div>
+      ${cancelled?`<span class="badge danger">${t('cancelled')}</span>`:''}
+    </div>
+  </div>`;
+}
+
+/* ---------------------------- VARGANI FORM ---------------------------- */
+function openVarganiForm(existing){
+  const isEdit = !!existing;
+  const receiptNo = isEdit ? existing.receiptNo : nextReceiptNumber();
+  const html = `
+    <div class="sheet-handle"></div>
+    <div class="sheet-head"><h3>${isEdit ? t('editReceipt') : t('addVargani')}</h3><button class="sheet-close" id="vfClose">✕</button></div>
+    <form id="varForm">
+      <div class="field"><label>${t('receiptNo')}</label><input type="text" value="${escapeHtml(receiptNo)}" disabled style="opacity:.7;"></div>
+      <div class="field" id="fDonor"><label>${t('donorName')} *</label><input type="text" id="iDonor" value="${escapeHtml(existing?.donorName||'')}"><div class="err">${t('required')}</div></div>
+      <div class="field"><label>${t('mobile')}</label><input type="tel" id="iMobile" maxlength="10" value="${escapeHtml(existing?.mobile||'')}"></div>
+      <div class="field"><label>${t('address')}</label><input type="text" id="iAddress" value="${escapeHtml(existing?.address||'')}"></div>
+      <div class="field" id="fAmount"><label>${t('amount')} *</label><input type="number" id="iAmount" min="1" value="${existing?.amount||''}"><div class="err">${t('invalidAmount')}</div></div>
+      <div class="field"><label>${t('paymentMethod')}</label>
+        <div class="seg" id="segMethod">
+          <button type="button" data-v="Cash" class="${(existing?.paymentMethod||'Cash')==='Cash'?'active':''}">${t('cash')}</button>
+          <button type="button" data-v="UPI" class="${existing?.paymentMethod==='UPI'?'active':''}">${t('upi')}</button>
+          <button type="button" data-v="Other" class="${existing?.paymentMethod==='Other'?'active':''}">${t('other')}</button>
+        </div>
+      </div>
+      <div class="field"><label>${t('date')}</label><input type="date" id="iDate" value="${existing?.date||todayISO()}"></div>
+      <div class="field"><label>${t('collectedBy')}</label><input type="text" id="iCollector" value="${escapeHtml(existing?.collectedBy || (STATE.currentUser?STATE.currentUser.name:''))}"></div>
+      <div class="field"><label>${t('notes')}</label><textarea id="iNotes">${escapeHtml(existing?.notes||'')}</textarea></div>
+      <button type="submit" class="btn btn-primary">${isEdit?t('save'):t('saveVargani')}</button>
+    </form>
+  `;
+  const ov = openSheet(html, {noBackdropClose:true});
+  ov.querySelector('#vfClose').addEventListener('click', closeSheet);
+  let method = existing?.paymentMethod || 'Cash';
+  ov.querySelectorAll('#segMethod button').forEach(b=>b.addEventListener('click', ()=>{
+    method = b.dataset.v;
+    ov.querySelectorAll('#segMethod button').forEach(x=>x.classList.remove('active'));
+    b.classList.add('active');
+  }));
+  ov.querySelector('#varForm').addEventListener('submit', async (e)=>{
+    e.preventDefault();
+    const donor = ov.querySelector('#iDonor').value.trim();
+    const amount = ov.querySelector('#iAmount').value;
+    let valid = true;
+    ov.querySelector('#fDonor').classList.toggle('invalid', !validateRequired(donor)); if(!validateRequired(donor)) valid=false;
+    ov.querySelector('#fAmount').classList.toggle('invalid', !validateAmount(amount)); if(!validateAmount(amount)) valid=false;
+    const mobile = ov.querySelector('#iMobile').value.trim();
+    if(mobile && !validateMobile(mobile)){ toast('Enter a valid 10-digit mobile number', 'err'); valid=false; }
+    if(!valid) return;
+
+    const stamp = nowStamp();
+    if(isEdit){
+      await editReceiptField(existing, {
+        donorName: donor, mobile, address: ov.querySelector('#iAddress').value.trim(),
+        amount: Number(amount), paymentMethod: method, date: ov.querySelector('#iDate').value,
+        collectedBy: ov.querySelector('#iCollector').value.trim(), notes: ov.querySelector('#iNotes').value.trim()
+      });
+      closeSheet();
+      toast('Receipt updated', 'ok');
+      navigateTo('receipts');
+      return;
+    }
+    if(isDuplicateReceiptNo(receiptNo, null)){ toast('Duplicate receipt number, please retry', 'err'); return; }
+    const rec = {
+      id: uid('rcpt'), receiptNo, donorName: donor, mobile, address: ov.querySelector('#iAddress').value.trim(),
+      amount: Number(amount), paymentMethod: method, date: ov.querySelector('#iDate').value || todayISO(),
+      time: stamp.time, ts: stamp.ts, collectedBy: ov.querySelector('#iCollector').value.trim(),
+      notes: ov.querySelector('#iNotes').value.trim(), status:'active', edited:false, editHistory:[]
+    };
+    await dbPut('receipts', rec);
+    STATE.cache.receipts.unshift(rec);
+    await logAudit('Receipt created', rec.id, {receiptNo: rec.receiptNo, amount: rec.amount});
+    closeSheet();
+    toast(t('addVargani')+' ✓', 'ok');
+    openReceiptView(rec.id);
+  });
+}
+
+/* ---------------------------- RECEIPTS SCREEN ---------------------------- */
+function renderReceiptsScreen(c){
+  const list = [...STATE.cache.receipts];
+  c.innerHTML = `
+    <div class="section-head"><h2>${t('receipts')}</h2></div>
+    <div id="rcList">
+      ${list.length ? list.map(r=>varganiRowHtml(r)).join('') : emptyState('🧾', t('noReceipts'), '')}
+    </div>
+  `;
+  c.querySelectorAll('[data-open-receipt]').forEach(el=>el.addEventListener('click', ()=>openReceiptView(el.dataset.openReceipt)));
+}
+
+/* ---------------------------- RECEIPT VIEW / EDIT HISTORY / CANCEL ---------------------------- */
+function openReceiptView(id){
+  const r = STATE.cache.receipts.find(x=>x.id===id);
+  if(!r){ toast('Receipt not found', 'err'); return; }
+  const cancelled = r.status === 'cancelled';
+  const m = STATE.mandal;
+  const html = `
+    <div class="sheet-handle"></div>
+    <div class="sheet-head"><h3>${t('viewReceipt')}</h3><button class="sheet-close" id="rvClose">✕</button></div>
+    <div class="receipt-paper" id="receiptPaperEl">
+      ${cancelled?`<div class="watermark-stamp">${t('cancelled')}</div>`:''}
+      <div class="rtitle">${escapeHtml(m?m.name:'MandalSetu')}</div>
+      <div class="rsub">${escapeHtml(m?m.village+', '+m.district:'')} · ${t('ganeshYear')} ${m?m.year:''}</div>
+      <div class="receipt-row"><span class="k">${t('receiptNo')}</span><span>${escapeHtml(r.receiptNo)}</span></div>
+      <div class="receipt-row"><span class="k">${t('donorName')}</span><span>${escapeHtml(r.donorName)} ${r.edited?'<span class="edited-flag">('+t('edited')+')</span>':''}</span></div>
+      ${r.mobile?`<div class="receipt-row"><span class="k">${t('mobile')}</span><span>${escapeHtml(r.mobile)}</span></div>`:''}
+      ${r.address?`<div class="receipt-row"><span class="k">${t('address')}</span><span>${escapeHtml(r.address)}</span></div>`:''}
+      <div class="receipt-row"><span class="k">${t('paymentMethod')}</span><span>${escapeHtml(r.paymentMethod)}</span></div>
+      <div class="receipt-row"><span class="k">${t('date')}</span><span>${fmtDate(r.date)} ${r.time||''}</span></div>
+      <div class="receipt-row"><span class="k">${t('collectedBy')}</span><span>${escapeHtml(r.collectedBy||'-')}</span></div>
+      ${r.notes?`<div class="receipt-row"><span class="k">${t('notes')}</span><span>${escapeHtml(r.notes)}</span></div>`:''}
+      <div class="receipt-amt">${fmtCurrency(r.amount)}</div>
+      ${cancelled?`<div class="muted center">${t('reason')}: ${escapeHtml(r.cancelReason||'')}</div>`:''}
+    </div>
+    <div class="btn-block-row" style="margin-top:14px;">
+      <button class="btn btn-secondary" id="rvPrint">🖨️ ${t('print')}</button>
+      <button class="btn btn-secondary" id="rvShare">📤 ${t('share')}</button>
+    </div>
+    ${(!cancelled && canManage('receipts')) ? `
+    <div class="btn-block-row" style="margin-top:10px;">
+      <button class="btn btn-outline" id="rvEdit">✏️ ${t('editReceipt')}</button>
+      <button class="btn btn-danger" id="rvCancel">🚫 ${t('cancelReceipt')}</button>
+    </div>` : ''}
+    ${r.editHistory && r.editHistory.length ? `
+      <div class="hr"></div>
+      <div class="card-title">${t('editHistory')}</div>
+      ${r.editHistory.map(h=>`
+        <div class="audit-item">
+          <div class="a-action">${escapeHtml(h.field)} changed</div>
+          <div class="a-meta">${escapeHtml(h.user)} · ${fmtDate(h.date)} ${h.time}</div>
+          <div class="diff-box"><span class="old">${escapeHtml(String(h.oldValue))}</span> → <span class="new">${escapeHtml(String(h.newValue))}</span></div>
+        </div>
+      `).join('')}
+    ` : ''}
+  `;
+  const ov = openSheet(html);
+  ov.querySelector('#rvClose').addEventListener('click', closeSheet);
+  ov.querySelector('#rvPrint').addEventListener('click', ()=>printReceipt(r));
+  ov.querySelector('#rvShare').addEventListener('click', ()=>shareReceiptText(r));
+  const editBtn = ov.querySelector('#rvEdit');
+  if(editBtn) editBtn.addEventListener('click', ()=>{ closeSheet(); openVarganiForm(r); });
+  const cancelBtn = ov.querySelector('#rvCancel');
+  if(cancelBtn) cancelBtn.addEventListener('click', ()=> openCancelReceiptDialog(r));
+}
+function shareReceiptText(r){
+  const m = STATE.mandal;
+  const lines = [
+    `🪔 ${m?m.name:'MandalSetu'}`,
+    `${t('receiptNo')}: ${r.receiptNo}`,
+    `${t('donorName')}: ${r.donorName}`,
+    `${t('amount')}: ${fmtCurrency(r.amount)}`,
+    `${t('paymentMethod')}: ${r.paymentMethod}`,
+    `${t('date')}: ${fmtDate(r.date)} ${r.time||''}`,
+    `गणपती बाप्पा मोरया! 🙏`
+  ].join('\n');
+  if(navigator.share){
+    navigator.share({title:'Receipt '+r.receiptNo, text: lines}).catch(()=>{});
+  } else if(navigator.clipboard){
+    navigator.clipboard.writeText(lines).then(()=>toast('Receipt text copied to clipboard','ok')).catch(()=>toast('Could not copy','err'));
+  } else {
+    toast('Sharing not supported on this browser', 'err');
+  }
+}
+function printReceipt(r){
+  const m = STATE.mandal;
+  const area = document.getElementById('printArea');
+  area.innerHTML = `
+    <div style="font-family:sans-serif;max-width:400px;margin:0 auto;border:2px dashed #b8860b;padding:20px;">
+      ${r.status==='cancelled'?'<div style="text-align:right;color:#b23a2e;font-weight:800;border:2px solid #b23a2e;display:inline-block;padding:2px 10px;transform:rotate(8deg);">CANCELLED</div>':''}
+      <h2 style="text-align:center;color:#c8500f;margin:4px 0;">${escapeHtml(m?m.name:'MandalSetu')}</h2>
+      <p style="text-align:center;color:#666;margin:0 0 14px;">${escapeHtml(m?m.village+', '+m.district:'')} — ${t('ganeshYear')} ${m?m.year:''}</p>
+      <table style="width:100%;font-size:14px;border-collapse:collapse;">
+        <tr><td style="padding:5px 0;color:#666;">${t('receiptNo')}</td><td style="text-align:right;font-weight:700;">${escapeHtml(r.receiptNo)}</td></tr>
+        <tr><td style="padding:5px 0;color:#666;">${t('donorName')}</td><td style="text-align:right;">${escapeHtml(r.donorName)}</td></tr>
+        <tr><td style="padding:5px 0;color:#666;">${t('paymentMethod')}</td><td style="text-align:right;">${escapeHtml(r.paymentMethod)}</td></tr>
+        <tr><td style="padding:5px 0;color:#666;">${t('date')}</td><td style="text-align:right;">${fmtDate(r.date)} ${r.time||''}</td></tr>
+        <tr><td style="padding:5px 0;color:#666;">${t('collectedBy')}</td><td style="text-align:right;">${escapeHtml(r.collectedBy||'-')}</td></tr>
+      </table>
+      <h1 style="text-align:center;color:#2e7d4f;margin:16px 0;">${fmtCurrency(r.amount)}</h1>
+      <p style="text-align:center;color:#999;font-size:12px;">गणपती बाप्पा मोरया! 🙏</p>
+    </div>`;
+  window.print();
+}
+
+/* Generic edit with history tracking, used for receipts */
+async function editReceiptField(existing, updates){
+  const stamp = nowStamp();
+  const history = existing.editHistory ? [...existing.editHistory] : [];
+  const fieldsToTrack = ['donorName','amount','mobile','address','paymentMethod','date','collectedBy','notes'];
+  fieldsToTrack.forEach(f=>{
+    const oldV = existing[f];
+    const newV = updates[f];
+    if(String(oldV??'') !== String(newV??'')){
+      history.push({ field:f, oldValue: oldV ?? '', newValue: newV ?? '', user: STATE.currentUser?STATE.currentUser.name:'System', date: stamp.date, time: stamp.time });
+    }
+  });
+  const updated = { ...existing, ...updates, edited: history.length>0 || existing.edited, editHistory: history };
+  await dbPut('receipts', updated);
+  const idx = STATE.cache.receipts.findIndex(x=>x.id===existing.id);
+  if(idx>-1) STATE.cache.receipts[idx] = updated;
+  await logAudit('Receipt edited', existing.id, {fields: history.map(h=>h.field)});
+  return updated;
+}
+function openCancelReceiptDialog(r){
+  const html = `
+    <div class="sheet-handle"></div>
+    <div class="sheet-head"><h3>${t('cancelReceipt')}</h3><button class="sheet-close" id="crClose">✕</button></div>
+    <p class="muted" style="margin-bottom:12px;">${r.donorName} — ${fmtCurrency(r.amount)} (${r.receiptNo})</p>
+    <div class="field"><label>${t('reason')} *</label><textarea id="cReason" placeholder="e.g. Entered by mistake / Duplicate entry"></textarea></div>
+    <button class="btn btn-danger" id="crConfirm">🚫 ${t('cancelReceipt')}</button>
+  `;
+  const ov = openSheet(html, {noBackdropClose:true});
+  ov.querySelector('#crClose').addEventListener('click', closeSheet);
+  ov.querySelector('#crConfirm').addEventListener('click', async ()=>{
+    const reason = ov.querySelector('#cReason').value.trim();
+    if(!reason){ toast(t('required'), 'err'); return; }
+    closeSheet();
+    confirmAction(t('cancelReceipt'), 'This will mark the receipt as cancelled. It will remain visible in reports but excluded from totals. This cannot be undone by simply re-editing.', async ()=>{
+      const stamp = nowStamp();
+      const updated = { ...r, status:'cancelled', cancelReason: reason, cancelledBy: STATE.currentUser?STATE.currentUser.name:'System', cancelledDate: stamp.date, cancelledTime: stamp.time };
+      await dbPut('receipts', updated);
+      const idx = STATE.cache.receipts.findIndex(x=>x.id===r.id);
+      if(idx>-1) STATE.cache.receipts[idx] = updated;
+      await logAudit('Receipt cancelled', r.id, {reason});
+      toast('Receipt cancelled', 'ok');
+      navigateTo(STATE.nav);
+    }, {danger:true, confirmLabel: t('cancelReceipt'), icon:'🚫'});
+  });
+}
+
+/* ---------------------------- EXPENSES SCREEN ---------------------------- */
+function renderExpensesScreen(c){
+  const f = STATE.filters.expenses;
+  let list = [...STATE.cache.expenses];
+  if(f.q){
+    const q = f.q.toLowerCase();
+    list = list.filter(e => (e.description||'').toLowerCase().includes(q) || (e.expenseCode||'').toLowerCase().includes(q) || (e.vendor||'').toLowerCase().includes(q));
+  }
+  if(f.cat) list = list.filter(e=>e.category===f.cat);
+  c.innerHTML = `
+    <div class="section-head"><h2>${t('expenses')}</h2></div>
+    <div class="search-bar"><span class="sic">🔎</span><input type="text" id="expSearch" placeholder="${t('search')}" value="${escapeHtml(f.q)}"></div>
+    <div class="filter-row">
+      <span class="chip ${!f.cat?'active':''}" data-cat="">All</span>
+      ${EXPENSE_CATEGORIES.map(cat=>`<span class="chip ${f.cat===cat?'active':''}" data-cat="${cat}">${cat}</span>`).join('')}
+    </div>
+    ${canManage('expenses') ? `<button class="btn btn-primary" id="btnAddExpense" style="margin-bottom:14px;">➕ ${t('addExpense')}</button>` : ''}
+    <div id="expList">
+      ${list.length ? list.map(e=>expenseRowHtml(e)).join('') : emptyState('💸', t('noExpenses'), '')}
+    </div>
+  `;
+  if(canManage('expenses')) c.querySelector('#btnAddExpense').addEventListener('click', openExpenseForm);
+  c.querySelector('#expSearch').addEventListener('input', debounce(e=>{ STATE.filters.expenses.q = e.target.value; renderExpensesScreen(c); }, 250));
+  c.querySelectorAll('[data-cat]').forEach(chip=>chip.addEventListener('click', ()=>{
+    STATE.filters.expenses.cat = chip.dataset.cat; renderExpensesScreen(c);
+  }));
+  c.querySelectorAll('[data-open-expense]').forEach(el=>el.addEventListener('click', ()=>openExpenseView(el.dataset.openExpense)));
+}
+function expenseRowHtml(e){
+  const cancelled = e.status === 'cancelled';
+  return `<div class="list-row" data-open-expense="${e.id}">
+    <div class="row-avatar">${e.category?e.category[0]:'💸'}</div>
+    <div class="row-main">
+      <div class="row-title">${escapeHtml(e.category)} ${e.edited?'<span class="edited-flag">✎</span>':''}</div>
+      <div class="row-sub">${escapeHtml(e.vendor||e.description||e.expenseCode)}</div>
+    </div>
+    <div class="row-end">
+      <div class="row-amt neg" style="${cancelled?'text-decoration:line-through;opacity:.5;color:var(--ink-soft);':''}">-${fmtCurrency(e.amount)}</div>
+      <div class="row-time">${fmtDate(e.date)}</div>
+      ${cancelled?`<span class="badge danger">${t('cancelled')}</span>`:''}
+    </div>
+  </div>`;
+}
+function openExpenseForm(existing){
+  const isEdit = !!existing;
+  const code = isEdit ? existing.expenseCode : nextExpenseCode();
+  const html = `
+    <div class="sheet-handle"></div>
+    <div class="sheet-head"><h3>${isEdit?t('edit'):t('addExpense')}</h3><button class="sheet-close" id="efClose">✕</button></div>
+    <form id="expForm">
+      <div class="field"><label>Expense ID</label><input type="text" value="${escapeHtml(code)}" disabled style="opacity:.7;"></div>
+      <div class="field"><label>${t('category')} *</label>
+        <div class="chip-group" id="chipCat">
+          ${EXPENSE_CATEGORIES.map(cat=>`<span class="chip ${(existing?.category||'Decoration')===cat?'active':''}" data-cat="${cat}">${cat}</span>`).join('')}
+        </div>
+      </div>
+      <div class="field" id="fAmt2"><label>${t('amount')} *</label><input type="number" id="eAmount" min="1" value="${existing?.amount||''}"><div class="err">${t('invalidAmount')}</div></div>
+      <div class="field"><label>${t('description')}</label><textarea id="eDesc">${escapeHtml(existing?.description||'')}</textarea></div>
+      <div class="field"><label>${t('vendor')}</label><input type="text" id="eVendor" value="${escapeHtml(existing?.vendor||'')}"></div>
+      <div class="field"><label>${t('paymentMethod')}</label>
+        <div class="seg" id="segMethod2">
+          <button type="button" data-v="Cash" class="${(existing?.paymentMethod||'Cash')==='Cash'?'active':''}">${t('cash')}</button>
+          <button type="button" data-v="UPI" class="${existing?.paymentMethod==='UPI'?'active':''}">${t('upi')}</button>
+          <button type="button" data-v="Other" class="${existing?.paymentMethod==='Other'?'active':''}">${t('other')}</button>
+        </div>
+      </div>
+      <div class="field"><label>${t('date')}</label><input type="date" id="eDate" value="${existing?.date||todayISO()}"></div>
+      <div class="field"><label>${t('addedBy')}</label><input type="text" id="eAddedBy" value="${escapeHtml(existing?.addedBy || (STATE.currentUser?STATE.currentUser.name:''))}"></div>
+      <div class="field"><label>${t('notes')}</label><textarea id="eNotes">${escapeHtml(existing?.notes||'')}</textarea></div>
+      <button type="submit" class="btn btn-primary">${t('saveExpense')}</button>
+    </form>
+  `;
+  const ov = openSheet(html, {noBackdropClose:true});
+  ov.querySelector('#efClose').addEventListener('click', closeSheet);
+  let category = existing?.category || 'Decoration';
+  ov.querySelectorAll('#chipCat .chip').forEach(chip=>chip.addEventListener('click', ()=>{
+    category = chip.dataset.cat;
+    ov.querySelectorAll('#chipCat .chip').forEach(x=>x.classList.remove('active'));
+    chip.classList.add('active');
+  }));
+  let method = existing?.paymentMethod || 'Cash';
+  ov.querySelectorAll('#segMethod2 button').forEach(b=>b.addEventListener('click', ()=>{
+    method = b.dataset.v;
+    ov.querySelectorAll('#segMethod2 button').forEach(x=>x.classList.remove('active'));
+    b.classList.add('active');
+  }));
+  ov.querySelector('#expForm').addEventListener('submit', async (e)=>{
+    e.preventDefault();
+    const amount = ov.querySelector('#eAmount').value;
+    let valid = true;
+    ov.querySelector('#fAmt2').classList.toggle('invalid', !validateAmount(amount)); if(!validateAmount(amount)) valid=false;
+    if(!valid) return;
+    const updates = {
+      category, amount:Number(amount), description: ov.querySelector('#eDesc').value.trim(),
+      vendor: ov.querySelector('#eVendor').value.trim(), paymentMethod: method,
+      date: ov.querySelector('#eDate').value || todayISO(), addedBy: ov.querySelector('#eAddedBy').value.trim(),
+      notes: ov.querySelector('#eNotes').value.trim()
+    };
+    if(isEdit){
+      await editExpenseField(existing, updates);
+      closeSheet(); toast('Expense updated', 'ok'); navigateTo('expenses');
+      return;
+    }
+    const stamp = nowStamp();
+    const rec = { id: uid('exp'), expenseCode: code, ...updates, time: stamp.time, ts: stamp.ts, status:'active', edited:false, editHistory:[] };
+    await dbPut('expenses', rec);
+    STATE.cache.expenses.unshift(rec);
+    await logAudit('Expense created', rec.id, {expenseCode: rec.expenseCode, amount: rec.amount});
+    closeSheet(); toast(t('addExpense')+' ✓', 'ok');
+    openExpenseView(rec.id);
+  });
+}
+async function editExpenseField(existing, updates){
+  const stamp = nowStamp();
+  const history = existing.editHistory ? [...existing.editHistory] : [];
+  const fieldsToTrack = ['category','amount','description','vendor','paymentMethod','date','addedBy','notes'];
+  fieldsToTrack.forEach(f=>{
+    const oldV = existing[f], newV = updates[f];
+    if(String(oldV??'') !== String(newV??'')){
+      history.push({ field:f, oldValue: oldV ?? '', newValue: newV ?? '', user: STATE.currentUser?STATE.currentUser.name:'System', date: stamp.date, time: stamp.time });
+    }
+  });
+  const updated = { ...existing, ...updates, edited: history.length>0 || existing.edited, editHistory: history };
+  await dbPut('expenses', updated);
+  const idx = STATE.cache.expenses.findIndex(x=>x.id===existing.id);
+  if(idx>-1) STATE.cache.expenses[idx] = updated;
+  await logAudit('Expense edited', existing.id, {fields: history.map(h=>h.field)});
+  return updated;
+}
+function openExpenseView(id){
+  const e = STATE.cache.expenses.find(x=>x.id===id);
+  if(!e){ toast('Expense not found', 'err'); return; }
+  const cancelled = e.status==='cancelled';
+  const html = `
+    <div class="sheet-handle"></div>
+    <div class="sheet-head"><h3>${t('expenses')}</h3><button class="sheet-close" id="evClose">✕</button></div>
+    <div class="receipt-paper">
+      ${cancelled?`<div class="watermark-stamp">${t('cancelled')}</div>`:''}
+      <div class="rtitle">${escapeHtml(e.category)}</div>
+      <div class="rsub">${escapeHtml(e.expenseCode)}</div>
+      <div class="receipt-row"><span class="k">${t('vendor')}</span><span>${escapeHtml(e.vendor||'-')}</span></div>
+      <div class="receipt-row"><span class="k">${t('description')}</span><span>${escapeHtml(e.description||'-')}</span></div>
+      <div class="receipt-row"><span class="k">${t('paymentMethod')}</span><span>${escapeHtml(e.paymentMethod)}</span></div>
+      <div class="receipt-row"><span class="k">${t('date')}</span><span>${fmtDate(e.date)} ${e.time||''}</span></div>
+      <div class="receipt-row"><span class="k">${t('addedBy')}</span><span>${escapeHtml(e.addedBy||'-')}</span></div>
+      <div class="receipt-amt" style="color:var(--danger);">-${fmtCurrency(e.amount)}</div>
+      ${cancelled?`<div class="muted center">${t('reason')}: ${escapeHtml(e.cancelReason||'')}</div>`:''}
+    </div>
+    ${(!cancelled && canManage('expenses')) ? `
+    <div class="btn-block-row" style="margin-top:14px;">
+      <button class="btn btn-outline" id="evEdit">✏️ ${t('edit')}</button>
+      <button class="btn btn-danger" id="evCancel">🚫 ${t('cancel')}</button>
+    </div>` : ''}
+    ${e.editHistory && e.editHistory.length ? `
+      <div class="hr"></div>
+      <div class="card-title">${t('editHistory')}</div>
+      ${e.editHistory.map(h=>`
+        <div class="audit-item">
+          <div class="a-action">${escapeHtml(h.field)} changed</div>
+          <div class="a-meta">${escapeHtml(h.user)} · ${fmtDate(h.date)} ${h.time}</div>
+          <div class="diff-box"><span class="old">${escapeHtml(String(h.oldValue))}</span> → <span class="new">${escapeHtml(String(h.newValue))}</span></div>
+        </div>
+      `).join('')}
+    ` : ''}
+  `;
+  const ov = openSheet(html);
+  ov.querySelector('#evClose').addEventListener('click', closeSheet);
+  const editBtn = ov.querySelector('#evEdit');
+  if(editBtn) editBtn.addEventListener('click', ()=>{ closeSheet(); openExpenseForm(e); });
+  const cancelBtn = ov.querySelector('#evCancel');
+  if(cancelBtn) cancelBtn.addEventListener('click', ()=>{
+    closeSheet();
+    const html2 = `
+      <div class="sheet-handle"></div>
+      <div class="sheet-head"><h3>${t('cancel')} ${t('expenses')}</h3><button class="sheet-close" id="ecClose">✕</button></div>
+      <p class="muted" style="margin-bottom:12px;">${escapeHtml(e.category)} — ${fmtCurrency(e.amount)}</p>
+      <div class="field"><label>${t('reason')} *</label><textarea id="ecReason"></textarea></div>
+      <button class="btn btn-danger" id="ecConfirm">🚫 ${t('cancel')}</button>
+    `;
+    const ov2 = openSheet(html2, {noBackdropClose:true});
+    ov2.querySelector('#ecClose').addEventListener('click', closeSheet);
+    ov2.querySelector('#ecConfirm').addEventListener('click', async ()=>{
+      const reason = ov2.querySelector('#ecReason').value.trim();
+      if(!reason){ toast(t('required'),'err'); return; }
+      closeSheet();
+      confirmAction(t('cancel'), 'This expense will be marked cancelled and excluded from totals, but kept in history.', async ()=>{
+        const stamp = nowStamp();
+        const updated = { ...e, status:'cancelled', cancelReason: reason, cancelledBy: STATE.currentUser?STATE.currentUser.name:'System', cancelledDate: stamp.date, cancelledTime: stamp.time };
+        await dbPut('expenses', updated);
+        const idx = STATE.cache.expenses.findIndex(x=>x.id===e.id);
+        if(idx>-1) STATE.cache.expenses[idx] = updated;
+        await logAudit('Expense cancelled', e.id, {reason});
+        toast('Expense cancelled', 'ok');
+        navigateTo(STATE.nav);
+      }, {danger:true, confirmLabel:t('cancel'), icon:'🚫'});
+    });
+  });
+}
+
+/* ---------------------------- MEMBERS SCREEN ---------------------------- */
+function renderMembersScreen(c){
+  const q = (STATE._memberSearch||'').toLowerCase();
+  let list = [...STATE.cache.members];
+  if(q) list = list.filter(m=>(m.name||'').toLowerCase().includes(q) || (m.mobile||'').includes(q));
+  c.innerHTML = `
+    <div class="section-head"><h2>${t('members')}</h2></div>
+    <div class="search-bar"><span class="sic">🔎</span><input type="text" id="memSearch" placeholder="${t('search')}" value="${escapeHtml(STATE._memberSearch||'')}"></div>
+    ${canManage('members') ? `<button class="btn btn-primary" id="btnAddMember" style="margin-bottom:14px;">➕ ${t('addMember')}</button>` : ''}
+    <div id="memList">
+      ${list.length ? list.map(m=>memberRowHtml(m)).join('') : emptyState('👥', t('noMembers'), '')}
+    </div>
+  `;
+  if(canManage('members')) c.querySelector('#btnAddMember').addEventListener('click', ()=>openMemberForm());
+  c.querySelector('#memSearch').addEventListener('input', debounce(e=>{ STATE._memberSearch = e.target.value; renderMembersScreen(c); },250));
+  c.querySelectorAll('[data-open-member]').forEach(el=>el.addEventListener('click', ()=>openMemberView(el.dataset.openMember)));
+}
+function memberRowHtml(m){
+  return `<div class="list-row" data-open-member="${m.id}">
+    <div class="row-avatar">${initials(m.name)}</div>
+    <div class="row-main">
+      <div class="row-title">${escapeHtml(m.name)}</div>
+      <div class="row-sub"><span class="role-badge">${escapeHtml(m.role)}</span> ${escapeHtml(m.mobile||'')}</div>
+    </div>
+    <div class="row-end">
+      <span class="badge ${m.active===false?'danger':'ok'}">${m.active===false?t('inactive'):t('active')}</span>
+    </div>
+  </div>`;
+}
+function openMemberForm(existing){
+  const isEdit = !!existing;
+  const html = `
+    <div class="sheet-handle"></div>
+    <div class="sheet-head"><h3>${isEdit?t('edit'):t('addMember')}</h3><button class="sheet-close" id="mfClose">✕</button></div>
+    <form id="memForm">
+      <div class="field" id="fMName"><label>${t('memberName')} *</label><input type="text" id="mName" value="${escapeHtml(existing?.name||'')}"><div class="err">${t('required')}</div></div>
+      <div class="field"><label>${t('mobile')}</label><input type="tel" id="mMobile" maxlength="10" value="${escapeHtml(existing?.mobile||'')}"></div>
+      <div class="field"><label>${t('role')}</label><select id="mRole">${ROLES.map(r=>`<option ${existing?.role===r?'selected':''}>${r}</option>`).join('')}</select></div>
+      <div class="field"><label>${t('address')}</label><input type="text" id="mAddress" value="${escapeHtml(existing?.address||'')}"></div>
+      <div class="field"><label>${t('joinDate')}</label><input type="date" id="mJoin" value="${existing?.joinDate||todayISO()}"></div>
+      <div class="field flex-between"><label style="margin:0;">${t('active')}</label>
+        <label class="switch"><input type="checkbox" id="mActive" ${existing?.active===false?'':'checked'}><span class="slider"></span></label>
+      </div>
+      <div class="field"><label>${t('notes')}</label><textarea id="mNotes">${escapeHtml(existing?.notes||'')}</textarea></div>
+      <button type="submit" class="btn btn-primary">${t('save')}</button>
+    </form>
+  `;
+  const ov = openSheet(html, {noBackdropClose:true});
+  ov.querySelector('#mfClose').addEventListener('click', closeSheet);
+  ov.querySelector('#memForm').addEventListener('submit', async (e)=>{
+    e.preventDefault();
+    const name = ov.querySelector('#mName').value.trim();
+    ov.querySelector('#fMName').classList.toggle('invalid', !validateRequired(name));
+    if(!validateRequired(name)) return;
+    const mobile = ov.querySelector('#mMobile').value.trim();
+    if(mobile && !validateMobile(mobile)){ toast('Enter a valid 10-digit mobile number','err'); return; }
+    const data = {
+      name, mobile, role: ov.querySelector('#mRole').value, address: ov.querySelector('#mAddress').value.trim(),
+      joinDate: ov.querySelector('#mJoin').value || todayISO(), active: ov.querySelector('#mActive').checked,
+      notes: ov.querySelector('#mNotes').value.trim()
+    };
+    if(isEdit){
+      const updated = { ...existing, ...data };
+      await dbPut('members', updated);
+      const idx = STATE.cache.members.findIndex(x=>x.id===existing.id);
+      if(idx>-1) STATE.cache.members[idx] = updated;
+      await logAudit('Member edited', existing.id, {});
+      toast('Member updated', 'ok');
+    } else {
+      const rec = { id: uid('mem'), ...data };
+      await dbPut('members', rec);
+      STATE.cache.members.push(rec);
+      STATE.cache.members.sort((a,b)=>(a.name||'').localeCompare(b.name||''));
+      await logAudit('Member added', rec.id, {name: rec.name});
+      toast(t('addMember')+' ✓', 'ok');
+    }
+    closeSheet();
+    navigateTo('members');
+  });
+}
+function openMemberView(id){
+  const m = STATE.cache.members.find(x=>x.id===id);
+  if(!m) return;
+  const html = `
+    <div class="sheet-handle"></div>
+    <div class="sheet-head"><h3>${escapeHtml(m.name)}</h3><button class="sheet-close" id="mvClose">✕</button></div>
+    <div class="card">
+      <div class="receipt-row"><span class="k">${t('role')}</span><span class="role-badge">${escapeHtml(m.role)}</span></div>
+      <div class="receipt-row"><span class="k">${t('mobile')}</span><span>${escapeHtml(m.mobile||'-')}</span></div>
+      <div class="receipt-row"><span class="k">${t('address')}</span><span>${escapeHtml(m.address||'-')}</span></div>
+      <div class="receipt-row"><span class="k">${t('joinDate')}</span><span>${fmtDate(m.joinDate)}</span></div>
+      <div class="receipt-row"><span class="k">${t('status')}</span><span class="badge ${m.active===false?'danger':'ok'}">${m.active===false?t('inactive'):t('active')}</span></div>
+      ${m.notes?`<div class="receipt-row"><span class="k">${t('notes')}</span><span>${escapeHtml(m.notes)}</span></div>`:''}
+    </div>
+    ${canManage('members') ? `
+    <div class="btn-block-row">
+      <button class="btn btn-outline" id="mvEdit">✏️ ${t('edit')}</button>
+      <button class="btn btn-danger" id="mvRemove">🗑️ ${t('delete')}</button>
+    </div>` : ''}
+  `;
+  const ov = openSheet(html);
+  ov.querySelector('#mvClose').addEventListener('click', closeSheet);
+  const editBtn = ov.querySelector('#mvEdit');
+  if(editBtn) editBtn.addEventListener('click', ()=>{ closeSheet(); openMemberForm(m); });
+  const removeBtn = ov.querySelector('#mvRemove');
+  if(removeBtn) removeBtn.addEventListener('click', ()=>{
+    closeSheet();
+    confirmAction(t('delete')+' '+t('members'), `Remove ${escapeHtml(m.name)} from the member list? This does not affect any past receipts or expenses.`, async ()=>{
+      await dbDelete('members', m.id);
+      STATE.cache.members = STATE.cache.members.filter(x=>x.id!==m.id);
+      await logAudit('Member removed', m.id, {name:m.name});
+      toast('Member removed', 'ok');
+      navigateTo('members');
+    }, {danger:true, confirmLabel:t('delete'), icon:'🗑️'});
+  });
+}
+
+/* ---------------------------- EVENTS SCREEN ---------------------------- */
+function renderEventsScreen(c){
+  const list = [...STATE.cache.events];
+  c.innerHTML = `
+    <div class="section-head"><h2>${t('events')}</h2></div>
+    ${canManage('events') ? `<button class="btn btn-primary" id="btnAddEvent" style="margin-bottom:14px;">➕ ${t('eventName')}</button>` : ''}
+    <div id="evList">
+      ${list.length ? list.map(ev=>eventRowHtml(ev)).join('') : emptyState('📅', t('noEvents'), '')}
+    </div>
+  `;
+  if(canManage('events')) c.querySelector('#btnAddEvent').addEventListener('click', ()=>openEventForm());
+  c.querySelectorAll('[data-open-event]').forEach(el=>el.addEventListener('click', ()=>openEventView(el.dataset.openEvent)));
+}
+function openEventForm(existing){
+  const isEdit = !!existing;
+  const html = `
+    <div class="sheet-handle"></div>
+    <div class="sheet-head"><h3>${isEdit?t('edit'):t('eventName')}</h3><button class="sheet-close" id="evfClose">✕</button></div>
+    <form id="evForm">
+      <div class="field"><label>${t('category')}</label>
+        <div class="chip-group" id="chipEvType">
+          ${EVENT_TYPES.map(ty=>`<span class="chip ${(existing?.eventType||'Aarti')===ty?'active':''}" data-ty="${ty}">${ty}</span>`).join('')}
+        </div>
+      </div>
+      <div class="field" id="fEName"><label>${t('eventName')} *</label><input type="text" id="evName" value="${escapeHtml(existing?.eventName||'')}"><div class="err">${t('required')}</div></div>
+      <div class="field"><label>${t('date')}</label><input type="date" id="evDate" value="${existing?.date||todayISO()}"></div>
+      <div class="btn-block-row">
+        <div class="field" style="flex:1;"><label>${t('startTime')}</label><input type="time" id="evStart" value="${existing?.startTime||''}"></div>
+        <div class="field" style="flex:1;"><label>${t('endTime')}</label><input type="time" id="evEnd" value="${existing?.endTime||''}"></div>
+      </div>
+      <div class="field"><label>${t('location')}</label><input type="text" id="evLoc" value="${escapeHtml(existing?.location||'')}"></div>
+      <div class="field"><label>${t('responsible')}</label><input type="text" id="evResp" value="${escapeHtml(existing?.responsible||'')}"></div>
+      <div class="field"><label>${t('description')}</label><textarea id="evDesc">${escapeHtml(existing?.description||'')}</textarea></div>
+      <div class="field"><label>${t('status')}</label>
+        <div class="seg" id="segStatus">
+          <button type="button" data-v="Planned" class="${(existing?.status||'Planned')==='Planned'?'active':''}">Planned</button>
+          <button type="button" data-v="Ongoing" class="${existing?.status==='Ongoing'?'active':''}">Ongoing</button>
+          <button type="button" data-v="Completed" class="${existing?.status==='Completed'?'active':''}">Completed</button>
+          <button type="button" data-v="Cancelled" class="${existing?.status==='Cancelled'?'active':''}">Cancelled</button>
+        </div>
+      </div>
+      <button type="submit" class="btn btn-primary">${t('saveEvent')}</button>
+    </form>
+  `;
+  const ov = openSheet(html, {noBackdropClose:true});
+  ov.querySelector('#evfClose').addEventListener('click', closeSheet);
+  let eventType = existing?.eventType || 'Aarti';
+  ov.querySelectorAll('#chipEvType .chip').forEach(chip=>chip.addEventListener('click', ()=>{
+    eventType = chip.dataset.ty;
+    ov.querySelectorAll('#chipEvType .chip').forEach(x=>x.classList.remove('active'));
+    chip.classList.add('active');
+  }));
+  let status = existing?.status || 'Planned';
+  ov.querySelectorAll('#segStatus button').forEach(b=>b.addEventListener('click', ()=>{
+    status = b.dataset.v;
+    ov.querySelectorAll('#segStatus button').forEach(x=>x.classList.remove('active'));
+    b.classList.add('active');
+  }));
+  ov.querySelector('#evForm').addEventListener('submit', async (e)=>{
+    e.preventDefault();
+    const name = ov.querySelector('#evName').value.trim();
+    ov.querySelector('#fEName').classList.toggle('invalid', !validateRequired(name));
+    if(!validateRequired(name)) return;
+    const data = {
+      eventType, eventName:name, date: ov.querySelector('#evDate').value || todayISO(),
+      startTime: ov.querySelector('#evStart').value, endTime: ov.querySelector('#evEnd').value,
+      location: ov.querySelector('#evLoc').value.trim(), responsible: ov.querySelector('#evResp').value.trim(),
+      description: ov.querySelector('#evDesc').value.trim(), status
+    };
+    if(isEdit){
+      const updated = {...existing, ...data};
+      await dbPut('events', updated);
+      const idx = STATE.cache.events.findIndex(x=>x.id===existing.id);
+      if(idx>-1) STATE.cache.events[idx]=updated;
+      if(existing.status !== 'Cancelled' && status === 'Cancelled'){
+        await logAudit('Event cancelled', existing.id, {eventName: name});
+      } else {
+        await logAudit('Event edited', existing.id, {eventName: name});
+      }
+      toast('Event updated', 'ok');
+    } else {
+      const rec = {id: uid('evt'), ...data};
+      await dbPut('events', rec);
+      STATE.cache.events.push(rec);
+      await logAudit('Event created', rec.id, {eventName: name});
+      toast(t('saveEvent')+' ✓', 'ok');
+    }
+    STATE.cache.events.sort((a,b)=> new Date(a.date+'T'+(a.startTime||'00:00')) - new Date(b.date+'T'+(b.startTime||'00:00')));
+    closeSheet();
+    navigateTo('events');
+  });
+}
+function openEventView(id){
+  const ev = STATE.cache.events.find(x=>x.id===id);
+  if(!ev) return;
+  const html = `
+    <div class="sheet-handle"></div>
+    <div class="sheet-head"><h3>${escapeHtml(ev.eventName)}</h3><button class="sheet-close" id="evvClose">✕</button></div>
+    <div class="card">
+      <div class="receipt-row"><span class="k">${t('category')}</span><span>${escapeHtml(ev.eventType||'-')}</span></div>
+      <div class="receipt-row"><span class="k">${t('date')}</span><span>${fmtDate(ev.date)}</span></div>
+      <div class="receipt-row"><span class="k">${t('startTime')}</span><span>${ev.startTime||'-'}</span></div>
+      <div class="receipt-row"><span class="k">${t('endTime')}</span><span>${ev.endTime||'-'}</span></div>
+      <div class="receipt-row"><span class="k">${t('location')}</span><span>${escapeHtml(ev.location||'-')}</span></div>
+      <div class="receipt-row"><span class="k">${t('responsible')}</span><span>${escapeHtml(ev.responsible||'-')}</span></div>
+      <div class="receipt-row"><span class="k">${t('status')}</span><span class="badge info">${escapeHtml(ev.status||'Planned')}</span></div>
+      ${ev.description?`<div class="receipt-row"><span class="k">${t('description')}</span><span>${escapeHtml(ev.description)}</span></div>`:''}
+    </div>
+    ${canManage('events') ? `<button class="btn btn-outline" id="evvEdit">✏️ ${t('edit')}</button>` : ''}
+  `;
+  const ov = openSheet(html);
+  ov.querySelector('#evvClose').addEventListener('click', closeSheet);
+  const editBtn = ov.querySelector('#evvEdit');
+  if(editBtn) editBtn.addEventListener('click', ()=>{ closeSheet(); openEventForm(ev); });
+}
+
+/* ---------------------------- REPORTS SCREEN ---------------------------- */
+function renderReportsScreen(c){
+  const tot = calcTotals();
+  c.innerHTML = `
+    <div class="section-head"><h2>${t('reports')}</h2></div>
+    <div class="card">
+      <div class="card-title">${t('financialReport')}</div>
+      <div class="receipt-row"><span class="k">${t('totalCollected')}</span><span style="color:var(--ok);font-weight:800;">${fmtCurrency(tot.totalCollected)}</span></div>
+      <div class="receipt-row"><span class="k">${t('totalExpenses')}</span><span style="color:var(--danger);font-weight:800;">${fmtCurrency(tot.totalExpenses)}</span></div>
+      <div class="receipt-row"><span class="k">${t('currentBalance')}</span><span style="color:var(--brass);font-weight:800;">${fmtCurrency(tot.balance)}</span></div>
+      <div class="receipt-row"><span class="k">${t('cancelledReceipts')}</span><span>${tot.cancelledReceiptCount}</span></div>
+      <div class="receipt-row"><span class="k">Cancelled Expenses</span><span>${tot.cancelledExpenses.length}</span></div>
+      <button class="btn btn-brass" id="repFinPdf" style="margin-top:12px;">📄 ${t('exportPdf')}</button>
+    </div>
+
+    <div class="card">
+      <div class="card-title">${t('collectionReport')}</div>
+      <p class="muted">${tot.validReceipts.length} entries · ${fmtCurrency(tot.totalCollected)}</p>
+      <button class="btn btn-secondary" id="repColPdf" style="margin-top:10px;">📄 ${t('exportPdf')}</button>
+    </div>
+
+    <div class="card">
+      <div class="card-title">${t('expenseReport')}</div>
+      <p class="muted">${tot.validExpenses.length} entries · ${fmtCurrency(tot.totalExpenses)}</p>
+      <button class="btn btn-secondary" id="repExpPdf" style="margin-top:10px;">📄 ${t('exportPdf')}</button>
+    </div>
+
+    <div class="card">
+      <div class="card-title">${t('memberList')}</div>
+      <p class="muted">${STATE.cache.members.length} members</p>
+      <button class="btn btn-secondary" id="repMemPdf" style="margin-top:10px;">📄 ${t('exportPdf')}</button>
+    </div>
+
+    <div class="card">
+      <div class="card-title">📜 Audit Log</div>
+      ${STATE.cache.auditLogs.slice(0,15).map(a=>`
+        <div class="audit-item">
+          <div class="a-action">${escapeHtml(a.action)}</div>
+          <div class="a-meta">${escapeHtml(a.user)} (${escapeHtml(a.role||'')}) · ${fmtDate(a.date)} ${a.time}</div>
+        </div>
+      `).join('') || `<p class="muted">No audit entries yet.</p>`}
+    </div>
+  `;
+  c.querySelector('#repFinPdf').addEventListener('click', ()=>printFinancialReport(tot));
+  c.querySelector('#repColPdf').addEventListener('click', ()=>printCollectionReport(tot));
+  c.querySelector('#repExpPdf').addEventListener('click', ()=>printExpenseReport(tot));
+  c.querySelector('#repMemPdf').addEventListener('click', ()=>printMemberList());
+}
+function printHeaderHtml(){
+  const m = STATE.mandal;
+  return `<div style="text-align:center;margin-bottom:16px;">
+    <h2 style="color:#c8500f;margin:0;">${escapeHtml(m?m.name:'MandalSetu')}</h2>
+    <p style="color:#666;margin:2px 0;">${escapeHtml(m?m.village+', '+m.district:'')} — ${t('ganeshYear')} ${m?m.year:''}</p>
+  </div>`;
+}
+function printCollectionReport(tot){
+  const rows = STATE.cache.receipts.map(r=>`
+    <tr style="${r.status==='cancelled'?'color:#999;text-decoration:line-through;':''}">
+      <td>${escapeHtml(r.receiptNo)}</td><td>${escapeHtml(r.donorName)}</td><td>${fmtCurrency(r.amount)}</td>
+      <td>${fmtDate(r.date)}</td><td>${escapeHtml(r.paymentMethod)}</td><td>${escapeHtml(r.collectedBy||'-')}</td>
+      <td>${r.status==='cancelled'?'CANCELLED':'-'}</td>
+    </tr>`).join('');
+  const area = document.getElementById('printArea');
+  area.innerHTML = `<div style="font-family:sans-serif;font-size:12px;">${printHeaderHtml()}
+    <h3>${t('collectionReport')}</h3>
+    <table style="width:100%;border-collapse:collapse;" border="1" cellpadding="5">
+      <tr style="background:#f3e6d0;"><th>${t('receiptNo')}</th><th>${t('donorName')}</th><th>${t('amount')}</th><th>${t('date')}</th><th>${t('paymentMethod')}</th><th>${t('collectedBy')}</th><th>${t('status')}</th></tr>
+      ${rows}
+    </table>
+    <h3 style="text-align:right;">Total: ${fmtCurrency(tot.totalCollected)}</h3>
+  </div>`;
+  window.print();
+}
+function printExpenseReport(tot){
+  const rows = STATE.cache.expenses.map(e=>`
+    <tr style="${e.status==='cancelled'?'color:#999;text-decoration:line-through;':''}">
+      <td>${escapeHtml(e.expenseCode)}</td><td>${escapeHtml(e.category)}</td><td>${escapeHtml(e.description||'-')}</td>
+      <td>${fmtCurrency(e.amount)}</td><td>${fmtDate(e.date)}</td><td>${escapeHtml(e.addedBy||'-')}</td>
+      <td>${e.status==='cancelled'?'CANCELLED':'-'}</td>
+    </tr>`).join('');
+  const area = document.getElementById('printArea');
+  area.innerHTML = `<div style="font-family:sans-serif;font-size:12px;">${printHeaderHtml()}
+    <h3>${t('expenseReport')}</h3>
+    <table style="width:100%;border-collapse:collapse;" border="1" cellpadding="5">
+      <tr style="background:#f3e6d0;"><th>ID</th><th>${t('category')}</th><th>${t('description')}</th><th>${t('amount')}</th><th>${t('date')}</th><th>${t('addedBy')}</th><th>${t('status')}</th></tr>
+      ${rows}
+    </table>
+    <h3 style="text-align:right;">Total: ${fmtCurrency(tot.totalExpenses)}</h3>
+  </div>`;
+  window.print();
+}
+function printFinancialReport(tot){
+  const area = document.getElementById('printArea');
+  area.innerHTML = `<div style="font-family:sans-serif;font-size:13px;">${printHeaderHtml()}
+    <h3>${t('financialReport')}</h3>
+    <table style="width:100%;border-collapse:collapse;" border="1" cellpadding="8">
+      <tr><td>${t('totalCollected')}</td><td style="text-align:right;">${fmtCurrency(tot.totalCollected)}</td></tr>
+      <tr><td>${t('totalExpenses')}</td><td style="text-align:right;">${fmtCurrency(tot.totalExpenses)}</td></tr>
+      <tr><td><b>${t('currentBalance')}</b></td><td style="text-align:right;"><b>${fmtCurrency(tot.balance)}</b></td></tr>
+      <tr><td>${t('pendingVargani')}</td><td style="text-align:right;">${fmtCurrency(tot.pending)}</td></tr>
+      <tr><td>${t('cancelledReceipts')}</td><td style="text-align:right;">${tot.cancelledReceiptCount}</td></tr>
+      <tr><td>Cancelled Expenses</td><td style="text-align:right;">${tot.cancelledExpenses.length}</td></tr>
+    </table>
+    <p style="margin-top:20px;color:#999;">Generated by MandalSetu on ${fmtDate(todayISO())}</p>
+  </div>`;
+  window.print();
+}
+function printMemberList(){
+  const rows = STATE.cache.members.map(m=>`<tr><td>${escapeHtml(m.name)}</td><td>${escapeHtml(m.role)}</td><td>${escapeHtml(m.mobile||'-')}</td><td>${m.active===false?'Inactive':'Active'}</td></tr>`).join('');
+  const area = document.getElementById('printArea');
+  area.innerHTML = `<div style="font-family:sans-serif;font-size:12px;">${printHeaderHtml()}
+    <h3>${t('memberList')}</h3>
+    <table style="width:100%;border-collapse:collapse;" border="1" cellpadding="6">
+      <tr style="background:#f3e6d0;"><th>${t('memberName')}</th><th>${t('role')}</th><th>${t('mobile')}</th><th>${t('status')}</th></tr>
+      ${rows}
+    </table>
+  </div>`;
+  window.print();
+}
+
+/* ---------------------------- CALCULATOR ----------------------------
+   Fully offline utility calculator. Its history is stored separately in the
+   'calcHistory' IndexedDB store and NEVER touches Vargani/Expense/Balance data. */
+const CALC = { display:'0', prevValue:null, operator:null, waitingForOperand:false, justEvaluated:false };
+function calcFormatNumber(n){
+  if(!isFinite(n)) return 'Error';
+  let s = Number(n.toPrecision(12)).toString();
+  if(s.length>15) s = Number(n).toExponential(6);
+  return s;
+}
+function calcCompute(a,b,op){
+  switch(op){
+    case '+': return a+b;
+    case '−': return a-b;
+    case '×': return a*b;
+    case '÷': if(b===0){ const e=new Error('DIV_ZERO'); throw e; } return a/b;
+    default: return b;
+  }
+}
+function calcRefreshDisplay(){
+  const dispEl = document.getElementById('calcDisplay');
+  const exprEl = document.getElementById('calcExpr');
+  if(dispEl) dispEl.textContent = CALC.display;
+  if(exprEl) exprEl.textContent = CALC.operator ? `${calcFormatNumber(CALC.prevValue)} ${CALC.operator}` : '';
+}
+function calcInputDigit(d){
+  if(CALC.waitingForOperand || CALC.justEvaluated){
+    CALC.display = d; CALC.waitingForOperand=false; CALC.justEvaluated=false;
+  } else {
+    CALC.display = CALC.display==='0' ? d : (CALC.display.replace('-','').length<15 ? CALC.display+d : CALC.display);
+  }
+  calcRefreshDisplay();
+}
+function calcInputDecimal(){
+  if(CALC.waitingForOperand || CALC.justEvaluated){ CALC.display='0.'; CALC.waitingForOperand=false; CALC.justEvaluated=false; }
+  else if(!CALC.display.includes('.')) CALC.display += '.';
+  calcRefreshDisplay();
+}
+function calcClearAll(){
+  CALC.display='0'; CALC.prevValue=null; CALC.operator=null; CALC.waitingForOperand=false; CALC.justEvaluated=false;
+  calcRefreshDisplay();
+}
+function calcBackspace(){
+  if(CALC.waitingForOperand || CALC.justEvaluated) return;
+  CALC.display = CALC.display.length>1 ? CALC.display.slice(0,-1) : '0';
+  calcRefreshDisplay();
+}
+function calcToggleSign(){
+  if(CALC.display==='0') return;
+  CALC.display = CALC.display.startsWith('-') ? CALC.display.slice(1) : ('-'+CALC.display);
+  calcRefreshDisplay();
+}
+function calcShowDivZero(){
+  toast('Cannot divide by zero.', 'err');
+  CALC.display='0'; CALC.prevValue=null; CALC.operator=null; CALC.waitingForOperand=false; CALC.justEvaluated=false;
+  calcRefreshDisplay();
+}
+function calcSetOperator(op){
+  const inputValue = parseFloat(CALC.display);
+  if(CALC.operator && !CALC.waitingForOperand){
+    let result;
+    try{ result = calcCompute(CALC.prevValue, inputValue, CALC.operator); }
+    catch(e){ calcShowDivZero(); return; }
+    CALC.display = calcFormatNumber(result);
+    CALC.prevValue = result;
+  } else {
+    CALC.prevValue = inputValue;
+  }
+  CALC.operator = op;
+  CALC.waitingForOperand = true;
+  CALC.justEvaluated = false;
+  calcRefreshDisplay();
+}
+async function calcEquals(){
+  if(CALC.operator===null || CALC.prevValue===null) return;
+  const inputValue = parseFloat(CALC.display);
+  let result;
+  try{ result = calcCompute(CALC.prevValue, inputValue, CALC.operator); }
+  catch(e){ calcShowDivZero(); return; }
+  const exprText = `${calcFormatNumber(CALC.prevValue)} ${CALC.operator} ${calcFormatNumber(inputValue)}`;
+  await addCalcHistoryEntry(exprText, calcFormatNumber(result));
+  CALC.display = calcFormatNumber(result);
+  CALC.prevValue = null; CALC.operator = null; CALC.waitingForOperand = false; CALC.justEvaluated = true;
+  calcRefreshDisplay();
+  calcRefreshHistoryPanel();
+}
+async function calcPercent(){
+  const inputValue = parseFloat(CALC.display);
+  if(CALC.operator && CALC.prevValue!==null){
+    // For + / − , "%" means a percentage OF the running total (e.g. 5000 + 10% = 5500).
+    // For × / ÷ , "%" simply converts the number to a fraction (e.g. 5000 × 10% = 500).
+    const percentAsValue = (CALC.operator==='+' || CALC.operator==='−')
+      ? (CALC.prevValue * inputValue/100)
+      : (inputValue/100);
+    let result;
+    try{ result = calcCompute(CALC.prevValue, percentAsValue, CALC.operator); }
+    catch(e){ calcShowDivZero(); return; }
+    const exprText = `${calcFormatNumber(CALC.prevValue)} ${CALC.operator} ${calcFormatNumber(inputValue)}%`;
+    await addCalcHistoryEntry(exprText, calcFormatNumber(result));
+    CALC.display = calcFormatNumber(result);
+    CALC.prevValue=null; CALC.operator=null; CALC.waitingForOperand=false; CALC.justEvaluated=true;
+  } else {
+    CALC.display = calcFormatNumber(inputValue/100);
+    CALC.justEvaluated = true;
+  }
+  calcRefreshDisplay();
+  calcRefreshHistoryPanel();
+}
+async function addCalcHistoryEntry(expression, result){
+  const entry = { id: uid('calc'), expression, result, ts: Date.now() };
+  await dbPut('calcHistory', entry);
+  STATE.cache.calcHistory.unshift(entry);
+  if(STATE.cache.calcHistory.length>50){
+    const removed = STATE.cache.calcHistory.pop();
+    await dbDelete('calcHistory', removed.id);
+  }
+}
+async function clearCalcHistory(){
+  await dbClear('calcHistory');
+  STATE.cache.calcHistory = [];
+  calcRefreshHistoryPanel();
+  toast('Calculator history cleared', 'ok');
+}
+function calcRefreshHistoryPanel(){
+  const panel = document.getElementById('calcHistoryList');
+  if(!panel) return;
+  const items = STATE.cache.calcHistory || [];
+  panel.innerHTML = items.length ? items.slice(0,20).map(h=>`
+    <div class="calc-hist-row">
+      <div class="ch-expr">${escapeHtml(h.expression)}</div>
+      <div class="ch-res">= ${escapeHtml(h.result)}</div>
+    </div>`).join('') : `<p class="muted center" style="padding:10px 0;font-size:12px;">No calculations yet.</p>`;
+}
+/* The calculator opens as a full centered overlay with NO backdrop-click-to-close, and it
+   sits above the bottom nav (z-index), so accidental taps can't dismiss it or navigate away. */
+function openCalculator(){
+  calcClearAll();
+  const root = document.getElementById('overlayRoot');
+  const ov = document.createElement('div');
+  ov.className = 'overlay center active';
+  ov.id = 'calcOverlay';
+  ov.innerHTML = `
+    <div class="dialog calc-dialog">
+      <div class="calc-header">
+        <span>🧮 Calculator</span>
+        <div>
+          <button class="sheet-close" id="calcClearHist" title="Clear history" style="margin-right:6px;">🗑️</button>
+          <button class="sheet-close" id="calcClose">✕</button>
+        </div>
+      </div>
+      <div class="calc-screen">
+        <div class="calc-expr" id="calcExpr"></div>
+        <div class="calc-display" id="calcDisplay">0</div>
+      </div>
+      <div class="calc-history-panel" id="calcHistoryList"></div>
+      <div class="calc-pad">
+        <button class="calc-btn calc-fn" data-c="AC">AC</button>
+        <button class="calc-btn calc-fn" data-c="back">⌫</button>
+        <button class="calc-btn calc-fn" data-c="%">%</button>
+        <button class="calc-btn calc-op" data-c="÷">÷</button>
+
+        <button class="calc-btn" data-c="7">7</button>
+        <button class="calc-btn" data-c="8">8</button>
+        <button class="calc-btn" data-c="9">9</button>
+        <button class="calc-btn calc-op" data-c="×">×</button>
+
+        <button class="calc-btn" data-c="4">4</button>
+        <button class="calc-btn" data-c="5">5</button>
+        <button class="calc-btn" data-c="6">6</button>
+        <button class="calc-btn calc-op" data-c="−">−</button>
+
+        <button class="calc-btn" data-c="1">1</button>
+        <button class="calc-btn" data-c="2">2</button>
+        <button class="calc-btn" data-c="3">3</button>
+        <button class="calc-btn calc-op" data-c="+">+</button>
+
+        <button class="calc-btn" data-c="+/-">±</button>
+        <button class="calc-btn" data-c="0">0</button>
+        <button class="calc-btn" data-c=".">.</button>
+        <button class="calc-btn calc-eq" data-c="=">=</button>
+      </div>
+    </div>
+  `;
+  root.appendChild(ov);
+  document.getElementById('calcClose').addEventListener('click', ()=>ov.remove());
+  document.getElementById('calcClearHist').addEventListener('click', clearCalcHistory);
+  ov.querySelectorAll('.calc-btn').forEach(btn=>{
+    btn.addEventListener('click', async ()=>{
+      const c = btn.dataset.c;
+      if(/^[0-9]$/.test(c)) calcInputDigit(c);
+      else if(c==='.') calcInputDecimal();
+      else if(c==='AC') calcClearAll();
+      else if(c==='back') calcBackspace();
+      else if(c==='+/-') calcToggleSign();
+      else if(c==='%') await calcPercent();
+      else if(c==='=') await calcEquals();
+      else calcSetOperator(c);
+    });
+  });
+  calcRefreshDisplay();
+  calcRefreshHistoryPanel();
+}
+
+/* ---------------------------- SETTINGS SCREEN ---------------------------- */
+function renderSettingsScreen(c){
+  const m = STATE.mandal;
+  const isPresident = STATE.currentUser && STATE.currentUser.role === 'President';
+  c.innerHTML = `
+    <div class="section-head"><h2>${t('settings')}</h2></div>
+    <div class="card">
+      <div class="settings-row" id="rowProfile"><span class="si">🏛️</span><div class="st">${t('mandalProfile')}<div class="ss">${escapeHtml(m?m.name:'')}</div></div><span class="sarrow">›</span></div>
+      <div class="settings-row" id="rowLang"><span class="si">🌐</span><div class="st">${t('language')}<div class="ss">${STATE.lang==='en'?'English':'मराठी'}</div></div><span class="sarrow">›</span></div>
+      <div class="settings-row" id="rowTheme"><span class="si">${STATE.theme==='dark'?'🌙':'☀️'}</span><div class="st">${t('theme')}<div class="ss">${STATE.theme==='dark'?'Dark':'Light'}</div></div><span class="sarrow">›</span></div>
+      <div class="settings-row" id="rowPin"><span class="si">🔐</span><div class="st">${t('pinSecurity')}<div class="ss">Change your security PIN (6-digit)</div></div><span class="sarrow">›</span></div>
+      <div class="settings-row" id="rowAutoLock"><span class="si">⏱️</span><div class="st">${t('autoLock')}<div class="ss">${STATE.autoLockMinutes} min</div></div><span class="sarrow">›</span></div>
+    </div>
+
+    <div class="card">
+      <div class="settings-row" id="rowCalc"><span class="si">🧮</span><div class="st">Calculator<div class="ss">Offline calculator, separate from financial records</div></div><span class="sarrow">›</span></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">${t('dataManagement')}</div>
+      <div class="settings-row" id="rowBackup"><span class="si">💾</span><div class="st">${t('backup')}<div class="ss">Save an encrypted local backup file</div></div><span class="sarrow">›</span></div>
+      <div class="settings-row" id="rowRestore"><span class="si">♻️</span><div class="st">${t('restore')}<div class="ss">Validated, previewed & safety-checked restore</div></div><span class="sarrow">›</span></div>
+      ${isPresident ? `
+      <div class="settings-row" id="rowExport"><span class="si">📤</span><div class="st">Advanced Export <span class="badge info">President</span><div class="ss">Sanitized JSON — excludes PIN data</div></div><span class="sarrow">›</span></div>
+      <div class="settings-row" id="rowImport"><span class="si">📥</span><div class="st">Advanced Import <span class="badge info">President</span><div class="ss">For data reconciliation only</div></div><span class="sarrow">›</span></div>
+      ` : ''}
+    </div>
+
+    <div class="card" style="background:var(--warn-bg);border-color:var(--warn);">
+      <div class="flex-between" style="align-items:flex-start;gap:10px;">
+        <span style="font-size:20px;">📵</span>
+        <p style="font-size:12.5px;color:var(--ink-soft);line-height:1.5;">${t('offlineNotice')}</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="settings-row" id="rowAbout"><span class="si">ℹ️</span><div class="st">${t('about')}<div class="ss">MandalSetu v1.1 · Fully offline</div></div><span class="sarrow">›</span></div>
+      ${isPresident ? `<div class="settings-row" id="rowUsers"><span class="si">👤</span><div class="st">Manage Users <span class="badge info">President</span><div class="ss">Roles & PIN accounts</div></div><span class="sarrow">›</span></div>` : ''}
+      <div class="settings-row" id="rowAudit"><span class="si">📜</span><div class="st">Audit Log<div class="ss">Full activity history</div></div><span class="sarrow">›</span></div>
+      <div class="settings-row" id="rowLogout"><span class="si">🔒</span><div class="st">Lock App Now<div class="ss">Return to PIN screen</div></div><span class="sarrow">›</span></div>
+    </div>
+
+    <div class="card">
+      <button class="btn btn-danger" id="rowReset">🗑️ ${t('resetAllData')}</button>
+    </div>
+    <input type="file" id="restoreFileInput" accept=".mset,application/json" style="display:none;">
+    ${isPresident ? `<input type="file" id="importFileInput" accept=".json,application/json" style="display:none;">` : ''}
+  `;
+  c.querySelector('#rowProfile').addEventListener('click', openMandalProfileForm);
+  c.querySelector('#rowLang').addEventListener('click', toggleLanguage);
+  c.querySelector('#rowTheme').addEventListener('click', toggleTheme);
+  c.querySelector('#rowPin').addEventListener('click', openChangePinFlow);
+  c.querySelector('#rowAutoLock').addEventListener('click', openAutoLockPicker);
+  c.querySelector('#rowCalc').addEventListener('click', openCalculator);
+  c.querySelector('#rowBackup').addEventListener('click', openBackupFlow);
+  c.querySelector('#rowRestore').addEventListener('click', ()=>c.querySelector('#restoreFileInput').click());
+  c.querySelector('#restoreFileInput').addEventListener('change', handleRestoreFile);
+  const rowExport = c.querySelector('#rowExport');
+  if(rowExport) rowExport.addEventListener('click', doExportAll);
+  const rowImport = c.querySelector('#rowImport');
+  if(rowImport) rowImport.addEventListener('click', ()=>c.querySelector('#importFileInput').click());
+  const importInput = c.querySelector('#importFileInput');
+  if(importInput) importInput.addEventListener('change', handleImportFile);
+  c.querySelector('#rowAbout').addEventListener('click', openAboutDialog);
+  const rowUsers = c.querySelector('#rowUsers');
+  if(rowUsers) rowUsers.addEventListener('click', openUsersManager);
+  c.querySelector('#rowAudit').addEventListener('click', openAuditLogViewer);
+  c.querySelector('#rowLogout').addEventListener('click', ()=>{ lockApp(); });
+  c.querySelector('#rowReset').addEventListener('click', openResetDataFlow);
+}
+function openMandalProfileForm(){
+  const m = STATE.mandal || {};
+  const html = `
+    <div class="sheet-handle"></div>
+    <div class="sheet-head"><h3>${t('mandalProfile')}</h3><button class="sheet-close" id="mpClose">✕</button></div>
+    <form id="mpForm">
+      <div class="field"><label>${t('mandalName')} *</label><input type="text" id="pName" value="${escapeHtml(m.name||'')}"></div>
+      <div class="field"><label>${t('village')}</label><input type="text" id="pVillage" value="${escapeHtml(m.village||'')}"></div>
+      <div class="field"><label>${t('district')}</label><input type="text" id="pDistrict" value="${escapeHtml(m.district||'')}"></div>
+      <div class="field"><label>${t('ganeshYear')}</label><input type="number" id="pYear" value="${m.year||new Date().getFullYear()}"></div>
+      <div class="field"><label>${t('president')}</label><input type="text" id="pPresident" value="${escapeHtml(m.president||'')}"></div>
+      <div class="field"><label>${t('vicePresident')}</label><input type="text" id="pVp" value="${escapeHtml(m.vp||'')}"></div>
+      <div class="field"><label>${t('secretary')}</label><input type="text" id="pSecretary" value="${escapeHtml(m.secretary||'')}"></div>
+      <div class="field"><label>${t('treasurer')}</label><input type="text" id="pTreasurer" value="${escapeHtml(m.treasurer||'')}"></div>
+      <div class="field"><label>Contact Mobile</label><input type="tel" id="pContact" value="${escapeHtml(m.contact||'')}"></div>
+      <div class="field"><label>Pledged / Target Vargani Total (₹, optional)</label><input type="number" id="pPledged" value="${m.pledgedTotal||''}"></div>
+      <button type="submit" class="btn btn-primary">${t('save')}</button>
+    </form>
+  `;
+  const ov = openSheet(html, {noBackdropClose:true});
+  ov.querySelector('#mpClose').addEventListener('click', closeSheet);
+  ov.querySelector('#mpForm').addEventListener('submit', async (e)=>{
+    e.preventDefault();
+    const name = ov.querySelector('#pName').value.trim();
+    if(!validateRequired(name)){ toast(t('required'),'err'); return; }
+    const updated = {
+      id: m.id || 'mandal-1', name, village: ov.querySelector('#pVillage').value.trim(),
+      district: ov.querySelector('#pDistrict').value.trim(), year: Number(ov.querySelector('#pYear').value)||new Date().getFullYear(),
+      president: ov.querySelector('#pPresident').value.trim(), vp: ov.querySelector('#pVp').value.trim(),
+      secretary: ov.querySelector('#pSecretary').value.trim(), treasurer: ov.querySelector('#pTreasurer').value.trim(),
+      contact: ov.querySelector('#pContact').value.trim(), pledgedTotal: Number(ov.querySelector('#pPledged').value)||0
+    };
+    await dbPut('mandal', updated);
+    STATE.mandal = updated;
+    await logAudit('Settings changed', updated.id, {field:'mandalProfile'});
+    closeSheet();
+    toast('Mandal profile saved', 'ok');
+    renderShell(); navigateTo('settings');
+  });
+}
+function openAutoLockPicker(){
+  const opts = [1,5,10,15,30];
+  const html = `
+    <div class="sheet-handle"></div>
+    <div class="sheet-head"><h3>${t('autoLock')}</h3><button class="sheet-close" id="alClose">✕</button></div>
+    <div class="chip-group">
+      ${opts.map(o=>`<span class="chip ${STATE.autoLockMinutes===o?'active':''}" data-min="${o}">${o} min</span>`).join('')}
+    </div>
+  `;
+  const ov = openSheet(html);
+  ov.querySelector('#alClose').addEventListener('click', closeSheet);
+  ov.querySelectorAll('[data-min]').forEach(chip=>chip.addEventListener('click', async ()=>{
+    STATE.autoLockMinutes = Number(chip.dataset.min);
+    await saveSettings();
+    await logAudit('Settings changed', '', {field:'autoLockMinutes', value: STATE.autoLockMinutes});
+    closeSheet(); toast('Auto-lock updated', 'ok'); navigateTo('settings');
+  }));
+}
+function openAuditLogViewer(){
+  const logs = STATE.cache.auditLogs.slice(0,100);
+  const html = `
+    <div class="sheet-handle"></div>
+    <div class="sheet-head"><h3>Audit Log</h3><button class="sheet-close" id="alvClose">✕</button></div>
+    ${logs.length ? logs.map(a=>`
+      <div class="audit-item">
+        <div class="a-action">${escapeHtml(a.action)}</div>
+        <div class="a-meta">${escapeHtml(a.user)} (${escapeHtml(a.role||'')}) · ${fmtDate(a.date)} ${a.time}</div>
+      </div>
+    `).join('') : `<p class="muted">No audit entries yet.</p>`}
+  `;
+  const ov = openSheet(html);
+  ov.querySelector('#alvClose').addEventListener('click', closeSheet);
+}
+function openAboutDialog(){
+  openDialog({
+    icon:'🪔', title:'MandalSetu',
+    message:'A fully offline Ganesh Mandal management app. All data stays on this device inside IndexedDB — nothing is ever sent over the network. Version 1.0.<br><br>गणपती बाप्पा मोरया!',
+    buttons:[{label:t('close'), cls:'btn-primary'}]
+  });
+}
+function openResetDataFlow(){
+  confirmAction('⚠️ '+t('resetAllData'), 'This will permanently delete ALL data on this device: members, receipts, expenses, events and settings. This cannot be undone. Make sure you have a backup first.', ()=>{
+    confirmAction('Are you absolutely sure?', 'Type confirmation is required. This is your final warning — all mandal data on this device will be erased.', async ()=>{
+      await Promise.all(STORES.map(s=>dbClear(s)));
+      toast('All data has been reset', 'ok');
+      setTimeout(()=>location.reload(), 800);
+    }, {danger:true, confirmLabel:'Erase Everything', icon:'🗑️'});
+  }, {danger:true, confirmLabel:t('confirm'), icon:'⚠️'});
+}
+
+/* ---------------------------- BACKUP / RESTORE UI ---------------------------- */
+function openBackupFlow(){
+  const html = `
+    <div class="sheet-handle"></div>
+    <div class="sheet-head"><h3>${t('backup')}</h3><button class="sheet-close" id="bfClose">✕</button></div>
+    <p class="muted" style="margin-bottom:14px;">Protect your backup with a password so only your mandal committee can restore it. Leave blank for an unencrypted backup.</p>
+    <div class="field"><label>Backup Password (optional)</label><input type="password" id="bkPass" placeholder="Leave blank for no encryption"></div>
+    <div class="field"><label>Confirm Password</label><input type="password" id="bkPass2"></div>
+    <button class="btn btn-primary" id="bkGo">💾 ${t('backup')}</button>
+  `;
+  const ov = openSheet(html, {noBackdropClose:true});
+  ov.querySelector('#bfClose').addEventListener('click', closeSheet);
+  ov.querySelector('#bkGo').addEventListener('click', async ()=>{
+    const p1 = ov.querySelector('#bkPass').value;
+    const p2 = ov.querySelector('#bkPass2').value;
+    if(p1 !== p2){ toast('Passwords do not match', 'err'); return; }
+    try{
+      const fname = await doBackup(p1 || null);
+      closeSheet();
+      toast('Backup saved: '+fname, 'ok');
+    }catch(err){
+      toast('Backup failed: '+err.message, 'err');
+    }
+  });
+}
+async function handleRestoreFile(e){
+  const file = e.target.files[0];
+  if(!file) return;
+  e.target.value = '';
+  const text = await file.text();
+  let outerEncrypted = false;
+  try{ outerEncrypted = !!JSON.parse(text).encrypted; }
+  catch(err){ toast('This file is not a valid MandalSetu backup.', 'err'); return; }
+  if(outerEncrypted) openRestorePasswordPrompt(text);
+  else runRestorePreview(text, null);
+}
+function openRestorePasswordPrompt(text){
+  const html = `
+    <div class="sheet-handle"></div>
+    <div class="sheet-head"><h3>${t('restore')}</h3><button class="sheet-close" id="rfClose">✕</button></div>
+    <p class="muted" style="margin-bottom:14px;">⚠️ This backup is password-protected. Enter the backup password to continue.</p>
+    <div class="field"><label>Backup Password</label><input type="password" id="rfPass"></div>
+    <button class="btn btn-danger" id="rfGo">♻️ ${t('restore')}</button>
+  `;
+  const ov = openSheet(html, {noBackdropClose:true});
+  ov.querySelector('#rfClose').addEventListener('click', closeSheet);
+  ov.querySelector('#rfGo').addEventListener('click', async ()=>{
+    const pass = ov.querySelector('#rfPass').value;
+    closeSheet();
+    await runRestorePreview(text, pass);
+  });
+}
+/* Steps 1-6 of the safe restore workflow: read, decrypt if needed, validate structure —
+   all BEFORE anything in the database is touched. */
+async function runRestorePreview(text, password){
+  let payload;
+  try{
+    payload = await readAndValidateBackup(text, password);
+  }catch(err){
+    if(err.message === 'PASSWORD_REQUIRED'){ openRestorePasswordPrompt(text); return; }
+    toast(err.message || 'Restore failed. Your existing data has not been changed.', 'err');
+    return;
+  }
+  showRestorePreviewDialog(payload);
+}
+/* Step 9-10: show a preview of what will be restored and ask for final confirmation. */
+function showRestorePreviewDialog(payload){
+  const html = `
+    <div class="sheet-handle"></div>
+    <div class="sheet-head"><h3>Confirm Restore</h3><button class="sheet-close" id="rpvClose">✕</button></div>
+    <div class="card">
+      <div class="card-title">Backup Preview</div>
+      <div class="receipt-row"><span class="k">Mandal</span><span>${escapeHtml(payload.mandal.name)}</span></div>
+      <div class="receipt-row"><span class="k">${t('ganeshYear')}</span><span>${escapeHtml(String(payload.mandal.year||''))}</span></div>
+      <div class="receipt-row"><span class="k">${t('members')}</span><span>${(payload.members||[]).length}</span></div>
+      <div class="receipt-row"><span class="k">${t('receipts')}</span><span>${(payload.receipts||[]).length}</span></div>
+      <div class="receipt-row"><span class="k">${t('expenses')}</span><span>${(payload.expenses||[]).length}</span></div>
+      <div class="receipt-row"><span class="k">${t('events')}</span><span>${(payload.events||[]).length}</span></div>
+    </div>
+    <p class="muted" style="margin:10px 0;">⚠️ Restoring will REPLACE all current data on this device with the data shown above. A safety backup of your CURRENT data will download automatically first. After restore, the app will lock and you must log in again.</p>
+    <button class="btn btn-danger" id="rpvConfirm">♻️ Restore Now</button>
+  `;
+  const ov = openSheet(html, {noBackdropClose:true});
+  ov.querySelector('#rpvClose').addEventListener('click', closeSheet);
+  ov.querySelector('#rpvConfirm').addEventListener('click', async ()=>{
+    closeSheet();
+    toast('Creating safety backup of current data…', 'ok');
+    try{
+      await applyRestore(payload);
+      toast('Data restored successfully. Please log in again.', 'ok');
+      STATE.currentUser = null;
+      lockApp();
+    }catch(err){
+      // Step "if anything fails": current data is guaranteed untouched by the atomic transaction.
+      toast(err.message || 'Restore failed. Your existing data has not been changed.', 'err');
+    }
+  });
+}
+async function handleImportFile(e){
+  // PART 5: plain/advanced JSON import is a destructive, President-only action.
+  if(!requirePresident('import data')){ e.target.value=''; return; }
+  const file = e.target.files[0];
+  if(!file) return;
+  e.target.value = '';
+  const text = await file.text();
+  // Reuses the exact same validated + previewed + safety-backed-up + atomic pipeline as Restore.
+  await runRestorePreview(text, null);
+}
+
+/* ---------------------------- USERS MANAGER (role/PIN accounts) ----------------------------
+   SECURITY: every function in this section re-checks requirePresident() itself — the UI also
+   hides these entry points from non-Presidents, but hiding a button is not authorization.
+   A non-President must NEVER be able to create/promote an account to President. */
+function openUsersManager(){
+  if(!requirePresident('manage users')) return;
+  const html = `
+    <div class="sheet-handle"></div>
+    <div class="sheet-head"><h3>Manage Users</h3><button class="sheet-close" id="umClose">✕</button></div>
+    <p class="muted" style="margin-bottom:10px;">Only the President can add, remove, or change roles/PINs for users.</p>
+    ${STATE.cache.users.length ? STATE.cache.users.map(u=>`
+      <div class="list-row" data-user="${u.id}">
+        <div class="row-avatar">${initials(u.name)}</div>
+        <div class="row-main"><div class="row-title">${escapeHtml(u.name)} ${u.id===STATE.currentUser.id?'<span class="badge info">You</span>':''}</div><div class="row-sub"><span class="role-badge">${escapeHtml(u.role)}</span></div></div>
+        <span class="sarrow">›</span>
+      </div>
+    `).join('') : `<p class="muted">No users yet.</p>`}
+    <button class="btn btn-primary" id="umAdd" style="margin-top:10px;">➕ Add User</button>
+  `;
+  const ov = openSheet(html);
+  ov.querySelector('#umClose').addEventListener('click', closeSheet);
+  ov.querySelector('#umAdd').addEventListener('click', ()=>{
+    if(!requirePresident('add user')) return;
+    closeSheet(); openAddUserForm();
+  });
+  ov.querySelectorAll('[data-user]').forEach(row=>row.addEventListener('click', ()=>{
+    const u = STATE.cache.users.find(x=>x.id===row.dataset.user);
+    if(u){ closeSheet(); openUserDetail(u); }
+  }));
+}
+function openAddUserForm(){
+  if(!requirePresident('add user')) return;
+  const html = `
+    <div class="sheet-handle"></div>
+    <div class="sheet-head"><h3>Add User</h3><button class="sheet-close" id="auClose">✕</button></div>
+    <form id="addUserForm">
+      <div class="field"><label>Name *</label><input type="text" id="auName"></div>
+      <div class="field"><label>${t('role')}</label><select id="auRole">${ROLES.map(r=>`<option>${r}</option>`).join('')}</select></div>
+      <div class="field"><label>Set 6-digit PIN *</label><input type="password" id="auPin" maxlength="6" inputmode="numeric" placeholder="6 digits"></div>
+      <div class="field hint" style="margin-top:-8px;">New PINs must be 6 digits for stronger security.</div>
+      <button type="submit" class="btn btn-primary">${t('save')}</button>
+    </form>
+  `;
+  const ov = openSheet(html, {noBackdropClose:true});
+  ov.querySelector('#auClose').addEventListener('click', closeSheet);
+  ov.querySelector('#addUserForm').addEventListener('submit', async (e)=>{
+    e.preventDefault();
+    if(!requirePresident('add user')) { closeSheet(); return; }
+    const name = ov.querySelector('#auName').value.trim();
+    const pin = ov.querySelector('#auPin').value.trim();
+    if(!name){ toast(t('required'),'err'); return; }
+    if(!/^\d{6}$/.test(pin)){ toast('PIN must be exactly 6 digits', 'err'); return; }
+    const pinHash = await sha256Hex(pin);
+    const role = ov.querySelector('#auRole').value;
+    const rec = { id: uid('user'), name, role, pinHash };
+    await dbPut('users', rec);
+    STATE.cache.users.push(rec);
+    await logAudit('User created', rec.id, {name: rec.name, role: rec.role});
+    toast('User added', 'ok');
+    closeSheet();
+  });
+}
+function openUserDetail(user){
+  if(!requirePresident('manage users')) return;
+  const html = `
+    <div class="sheet-handle"></div>
+    <div class="sheet-head"><h3>${escapeHtml(user.name)}</h3><button class="sheet-close" id="udClose">✕</button></div>
+    <div class="field"><label>${t('role')}</label>
+      <select id="udRole">${ROLES.map(r=>`<option ${user.role===r?'selected':''}>${r}</option>`).join('')}</select>
+    </div>
+    <button class="btn btn-secondary" id="udSaveRole" style="margin-bottom:10px;">Update Role</button>
+    <button class="btn btn-outline" id="udResetPin" style="margin-bottom:10px;">🔐 Reset PIN</button>
+    ${STATE.cache.users.length>1 ? `<button class="btn btn-danger" id="udRemove">🗑️ Remove User</button>` : ''}
+  `;
+  const ov = openSheet(html, {noBackdropClose:true});
+  ov.querySelector('#udClose').addEventListener('click', closeSheet);
+  ov.querySelector('#udSaveRole').addEventListener('click', async ()=>{
+    if(!requirePresident('change user role')) return;
+    const newRole = ov.querySelector('#udRole').value;
+    if(newRole === user.role){ closeSheet(); return; }
+    // Never allow the last President to be demoted — that would permanently lock everyone out
+    // of user management (a non-President can never create/promote to President).
+    if(user.role==='President' && newRole!=='President'){
+      const presidentCount = STATE.cache.users.filter(u=>u.role==='President').length;
+      if(presidentCount<=1){ toast('Cannot change role: at least one President is required.', 'err'); return; }
+    }
+    const updated = {...user, role:newRole};
+    await dbPut('users', updated);
+    const idx = STATE.cache.users.findIndex(x=>x.id===user.id);
+    if(idx>-1) STATE.cache.users[idx]=updated;
+    if(STATE.currentUser.id===user.id) STATE.currentUser=updated;
+    await logAudit('User role changed', user.id, {from:user.role, to:newRole});
+    closeSheet();
+    toast('Role updated', 'ok');
+    renderShell(); navigateTo('settings');
+  });
+  ov.querySelector('#udResetPin').addEventListener('click', ()=>{ closeSheet(); openResetUserPinFlow(user); });
+  const removeBtn = ov.querySelector('#udRemove');
+  if(removeBtn) removeBtn.addEventListener('click', ()=>{
+    if(!requirePresident('remove user')) return;
+    if(user.role==='President'){
+      const presidentCount = STATE.cache.users.filter(u=>u.role==='President').length;
+      if(presidentCount<=1){ toast('Cannot remove the only President account.', 'err'); return; }
+    }
+    if(user.id===STATE.currentUser.id){ toast('You cannot remove your own account while logged in.', 'err'); return; }
+    closeSheet();
+    confirmAction('Remove User', `Remove ${escapeHtml(user.name)}? They will no longer be able to log in.`, async ()=>{
+      if(!requirePresident('remove user')) return;
+      await dbDelete('users', user.id);
+      STATE.cache.users = STATE.cache.users.filter(u=>u.id!==user.id);
+      await logAudit('User removed', user.id, {name:user.name, role:user.role});
+      toast('User removed', 'ok');
+    }, {danger:true, confirmLabel:'Remove', icon:'🗑️'});
+  });
+}
+
+/* ---------------------------- FIRST-TIME SETUP WIZARD ---------------------------- */
+function renderSetupWizard(){
+  const app = document.getElementById('app');
+  app.innerHTML = `
+    <div class="screens" style="padding-top:40px;">
+      <div class="card" style="text-align:center;border:none;background:linear-gradient(135deg,var(--shendur-dark),var(--peacock-dark));color:#fff;">
+        <div style="font-size:40px;">🪔🙏🪔</div>
+        <h1 style="margin-top:6px;">${t('welcome')}</h1>
+        <p style="opacity:.9;font-size:13px;margin-top:4px;">${t('createMandal')}</p>
+      </div>
+      <div class="card">
+        <form id="setupForm">
+          <div class="field" id="fSName"><label>${t('mandalName')} *</label><input type="text" id="sName"><div class="err">${t('required')}</div></div>
+          <div class="field"><label>${t('village')}</label><input type="text" id="sVillage"></div>
+          <div class="field"><label>${t('district')}</label><input type="text" id="sDistrict"></div>
+          <div class="field"><label>${t('ganeshYear')}</label><input type="number" id="sYear" value="${new Date().getFullYear()}"></div>
+          <div class="field"><label>${t('president')}</label><input type="text" id="sPresident"></div>
+          <div class="field"><label>${t('vicePresident')}</label><input type="text" id="sVp"></div>
+          <div class="field"><label>${t('secretary')}</label><input type="text" id="sSecretary"></div>
+          <div class="field"><label>${t('treasurer')}</label><input type="text" id="sTreasurer"></div>
+          <button type="submit" class="btn btn-primary">${t('getStarted')} →</button>
+        </form>
+      </div>
+    </div>
+  `;
+  document.getElementById('setupForm').addEventListener('submit', (e)=>{
+    e.preventDefault();
+    const name = document.getElementById('sName').value.trim();
+    document.getElementById('fSName').classList.toggle('invalid', !validateRequired(name));
+    if(!validateRequired(name)) return;
+    STATE._setupData = {
+      id:'mandal-1', name, village: document.getElementById('sVillage').value.trim(),
+      district: document.getElementById('sDistrict').value.trim(), year: Number(document.getElementById('sYear').value)||new Date().getFullYear(),
+      president: document.getElementById('sPresident').value.trim(), vp: document.getElementById('sVp').value.trim(),
+      secretary: document.getElementById('sSecretary').value.trim(), treasurer: document.getElementById('sTreasurer').value.trim(),
+      contact:'', pledgedTotal:0
+    };
+    renderSetupRoleStep();
+  });
+}
+function renderSetupRoleStep(){
+  const app = document.getElementById('app');
+  app.innerHTML = `
+    <div class="screens" style="padding-top:60px;">
+      <div class="card center">
+        <div style="font-size:34px;">👤</div>
+        <h2 style="margin-top:6px;">${t('selectRole')}</h2>
+        <p class="muted" style="margin-top:4px;">This determines what you can access. You can add more users later.</p>
+      </div>
+      <div class="card">
+        <div class="field"><label>Your Name *</label><input type="text" id="ownName"></div>
+        <div class="chip-group" id="roleChips">
+          ${ROLES.map(r=>`<span class="chip ${r==='President'?'active':''}" data-role="${r}">${r}</span>`).join('')}
+        </div>
+        <button class="btn btn-primary" id="roleNext" style="margin-top:18px;">${t('getStarted')} →</button>
+      </div>
+    </div>
+  `;
+  let role = 'President';
+  document.querySelectorAll('#roleChips .chip').forEach(chip=>chip.addEventListener('click', ()=>{
+    role = chip.dataset.role;
+    document.querySelectorAll('#roleChips .chip').forEach(x=>x.classList.remove('active'));
+    chip.classList.add('active');
+  }));
+  document.getElementById('roleNext').addEventListener('click', ()=>{
+    const name = document.getElementById('ownName').value.trim();
+    if(!name){ toast(t('required'), 'err'); return; }
+    STATE._setupData.ownerName = name;
+    STATE._setupData.ownerRole = role;
+    renderSetupPinStep();
+  });
+}
+function renderSetupPinStep(){
+  STATE.pinBuffer = '';
+  STATE.pinMode = 'set';
+  const app = document.getElementById('app');
+  app.innerHTML = pinScreenHtml(t('setPin'), 'Choose a 6-digit PIN to protect your mandal data.', false, {mode:'set'});
+  wirePinPad(async (pin)=>{
+    STATE._setupData.tempPin = pin;
+    STATE.pinBuffer = '';
+    renderSetupPinConfirmStep();
+  }, {mode:'set', exactLen:6, maxLen:6, minLen:6});
+}
+function renderSetupPinConfirmStep(){
+  const app = document.getElementById('app');
+  app.innerHTML = pinScreenHtml(t('confirmPin'), 'Re-enter your PIN to confirm.', false, {mode:'set'});
+  wirePinPad(async (pin)=>{
+    if(pin !== STATE._setupData.tempPin){
+      toast(t('wrongPin'), 'err');
+      STATE.pinBuffer = '';
+      renderSetupPinStep();
+      return;
+    }
+    await finishSetup(pin);
+  }, {mode:'set', exactLen:6, maxLen:6, minLen:6});
+}
+async function finishSetup(pin){
+  const d = STATE._setupData;
+  const mandal = { id:d.id, name:d.name, village:d.village, district:d.district, year:d.year, president:d.president, vp:d.vp, secretary:d.secretary, treasurer:d.treasurer, contact:d.contact||'', pledgedTotal:d.pledgedTotal||0 };
+  await dbPut('mandal', mandal);
+  const pinHash = await sha256Hex(pin);
+  const user = { id: uid('user'), name: d.ownerName, role: d.ownerRole, pinHash };
+  await dbPut('users', user);
+  await saveSettings();
+  STATE.mandal = mandal;
+  STATE.cache.users = [user];
+  STATE.currentUser = user;
+  STATE.locked = false;
+  await logAudit('Mandal created', mandal.id, {name: mandal.name});
+  toast('गणपती बाप्पा मोरया! Setup complete.', 'ok');
+  boot();
+}
+
+/* ---------------------------- PIN / LOCK SCREENS ----------------------------
+   PIN policy: new/changed PINs are 6 digits (stronger). Existing 4-digit PINs from
+   before this update keep working unchanged — we compare the SHA-256 hash of whatever
+   the user typed, whatever its length, against the stored hash, so no migration is
+   required and nobody is locked out. */
+function pinPadInnerHtml(mode){
+  // mode: 'set' (fixed-length, auto-submits) | 'login' (variable 4-6 length, explicit submit button)
+  return `
+    <div class="pin-dots" id="pinDots">${[0,1,2,3,4,5].map(()=>`<div class="pin-dot"></div>`).join('')}</div>
+    <div class="pin-pad" id="pinPad">
+      ${[1,2,3,4,5,6,7,8,9].map(n=>`<button type="button" class="pin-key" data-k="${n}">${n}</button>`).join('')}
+      <button type="button" class="pin-key fn" data-k="clear">Clear</button>
+      <button type="button" class="pin-key" data-k="0">0</button>
+      <button type="button" class="pin-key fn" data-k="back">⌫</button>
+    </div>
+    ${mode==='login' ? `<button type="button" class="btn btn-primary" id="pinEnterBtn" style="margin-top:16px;" disabled>${t('login')} ✓</button>` : ''}
+  `;
+}
+function pinScreenHtml(title, sub, isLockScreen, opts){
+  opts = opts || {};
+  const wrapOpen = isLockScreen ? `<div class="lock-screen">` : `<div class="screens" style="padding-top:60px;">`;
+  const wrapClose = `</div>`;
+  const inner = `
+    <div class="${isLockScreen?'':'card center'}">
+      <div class="${isLockScreen?'li':''}" style="${isLockScreen?'':'font-size:34px;'}">🔐</div>
+      <h2 style="${isLockScreen?'color:#fff;':''}margin-top:6px;">${title}</h2>
+      <p class="${isLockScreen?'sub':'muted'}" style="margin-top:4px;">${sub}</p>
+      ${pinPadInnerHtml(opts.mode || 'set')}
+    </div>
+  `;
+  return wrapOpen + inner + wrapClose;
+}
+/* opts: {mode:'set'|'login', exactLen, minLen, maxLen}
+   'set'   -> requires exactLen digits, auto-submits the moment that length is reached.
+   'login' -> accepts minLen..maxLen digits; user must tap the Enter/Unlock button to submit
+              (needed because we don't know in advance whether an existing PIN is 4 or 6 digits). */
+function wirePinPad(onComplete, opts){
+  opts = opts || {};
+  const mode = opts.mode || 'set';
+  const exactLen = opts.exactLen || 6;
+  const minLen = opts.minLen || 4;
+  const maxLen = opts.maxLen || 6;
+  const pad = document.getElementById('pinPad');
+  const dotsWrap = document.getElementById('pinDots');
+  const enterBtn = document.getElementById('pinEnterBtn');
+  function refreshDots(){
+    dotsWrap.querySelectorAll('.pin-dot').forEach((d,i)=>{
+      d.classList.toggle('filled', i < STATE.pinBuffer.length);
+    });
+    if(enterBtn) enterBtn.disabled = STATE.pinBuffer.length < minLen;
+  }
+  refreshDots();
+  pad.querySelectorAll('.pin-key').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const k = btn.dataset.k;
+      if(k==='clear'){ STATE.pinBuffer=''; refreshDots(); return; }
+      if(k==='back'){ STATE.pinBuffer = STATE.pinBuffer.slice(0,-1); refreshDots(); return; }
+      if(STATE.pinBuffer.length>=maxLen) return;
+      STATE.pinBuffer += k;
+      refreshDots();
+      if(mode==='set' && STATE.pinBuffer.length===exactLen){
+        const pin = STATE.pinBuffer;
+        setTimeout(()=>onComplete(pin), 120);
+      }
+    });
+  });
+  if(enterBtn){
+    enterBtn.addEventListener('click', ()=>{
+      if(STATE.pinBuffer.length < minLen) return;
+      onComplete(STATE.pinBuffer);
+    });
+  }
+}
+function renderLockoutCountdown(app){
+  function render(){
+    const secs = lockoutRemainingSeconds();
+    if(secs<=0){
+      if(STATE.lockoutIntervalId){ clearInterval(STATE.lockoutIntervalId); STATE.lockoutIntervalId=null; }
+      showLockScreen();
+      return;
+    }
+    app.innerHTML = `
+      <div class="lock-screen">
+        <div class="li">⏳</div>
+        <h2>Too Many Attempts</h2>
+        <p class="sub">For security, login is temporarily locked.<br>Try again in <b>${secs}s</b>.</p>
+      </div>`;
+  }
+  render();
+  STATE.lockoutIntervalId = setInterval(render, 1000);
+}
+function showLockScreen(){
+  STATE.locked = true;
+  STATE.pinBuffer = '';
+  if(STATE.lockoutIntervalId){ clearInterval(STATE.lockoutIntervalId); STATE.lockoutIntervalId=null; }
+  const app = document.getElementById('app');
+  if(isLockedOut()){
+    renderLockoutCountdown(app);
+    return;
+  }
+  app.innerHTML = pinScreenHtml(t('enterPin'), STATE.mandal ? STATE.mandal.name : '', true, {mode:'login'});
+  wirePinPad(async (pin)=>{
+    const hash = await sha256Hex(pin);
+    const match = STATE.cache.users.find(u=>u.pinHash===hash);
+    if(match){
+      await registerSuccessfulLogin();
+      STATE.currentUser = match;
+      STATE.locked = false;
+      STATE.lastActivity = Date.now();
+      await logAudit('Login', match.id, {role: match.role});
+      toast('Welcome, '+match.name, 'ok');
+      renderShell();
+      navigateTo('dashboard');
+    } else {
+      await registerFailedAttempt();
+      await logAudit('Failed login', '', {});
+      STATE.pinBuffer = '';
+      if(isLockedOut()){
+        toast('Too many attempts. Login is temporarily locked.', 'err');
+      } else {
+        const usedThisCycle = STATE.security.failedAttempts % 5;
+        const remaining = 5 - usedThisCycle;
+        toast(t('wrongPin') + ` (${remaining} attempt${remaining===1?'':'s'} left)`, 'err');
+      }
+      showLockScreen();
+    }
+  }, {mode:'login', minLen:4, maxLen:6});
+}
+function lockApp(){
+  STATE.locked = true;
+  showLockScreen();
+}
+function openChangePinFlow(){
+  STATE.pinBuffer = '';
+  const html = `
+    <div class="sheet-handle"></div>
+    <div class="sheet-head"><h3>${t('pinSecurity')}</h3><button class="sheet-close" id="cpClose">✕</button></div>
+    <p class="muted" style="margin-bottom:14px;">Enter your current PIN to continue.</p>
+    ${pinPadInnerHtml('login')}
+  `;
+  const ov = openSheet(html, {noBackdropClose:true});
+  ov.querySelector('#cpClose').addEventListener('click', closeSheet);
+  wirePinPad(async (pin)=>{
+    const hash = await sha256Hex(pin);
+    if(!STATE.currentUser || STATE.currentUser.pinHash !== hash){
+      // FIX: reset the buffer/dots IN PLACE instead of recursively reopening the sheet,
+      // which previously stacked duplicate overlays with the same DOM id and got stuck on screen.
+      toast(t('wrongPin'), 'err');
+      STATE.pinBuffer = '';
+      ov.querySelectorAll('#pinDots .pin-dot').forEach(d=>d.classList.remove('filled'));
+      const enterBtn = ov.querySelector('#pinEnterBtn');
+      if(enterBtn) enterBtn.disabled = true;
+      return;
+    }
+    closeSheet();
+    openNewPinFlow();
+  }, {mode:'login', minLen:4, maxLen:6});
+}
+function openNewPinFlow(){
+  STATE.pinBuffer = '';
+  const html = `
+    <div class="sheet-handle"></div>
+    <div class="sheet-head"><h3>New PIN</h3><button class="sheet-close" id="npClose">✕</button></div>
+    <p class="muted" style="margin-bottom:14px;">Enter a new 6-digit PIN.</p>
+    ${pinPadInnerHtml('set')}
+  `;
+  const ov = openSheet(html, {noBackdropClose:true});
+  ov.querySelector('#npClose').addEventListener('click', closeSheet);
+  wirePinPad(async (pin)=>{
+    const hash = await sha256Hex(pin);
+    const updated = { ...STATE.currentUser, pinHash: hash };
+    await dbPut('users', updated);
+    const idx = STATE.cache.users.findIndex(u=>u.id===updated.id);
+    if(idx>-1) STATE.cache.users[idx] = updated;
+    STATE.currentUser = updated;
+    await logAudit('PIN changed', updated.id, {});
+    closeSheet();
+    toast('PIN updated successfully', 'ok');
+  }, {mode:'set', exactLen:6, maxLen:6, minLen:6});
+}
+/* President-only: reset another user's PIN (does not require knowing their old PIN). */
+function openResetUserPinFlow(user){
+  if(!requirePresident('reset PIN')) return;
+  STATE.pinBuffer = '';
+  const html = `
+    <div class="sheet-handle"></div>
+    <div class="sheet-head"><h3>Reset PIN — ${escapeHtml(user.name)}</h3><button class="sheet-close" id="rpClose">✕</button></div>
+    <p class="muted" style="margin-bottom:14px;">Set a new 6-digit PIN for this user.</p>
+    ${pinPadInnerHtml('set')}
+  `;
+  const ov = openSheet(html, {noBackdropClose:true});
+  ov.querySelector('#rpClose').addEventListener('click', closeSheet);
+  wirePinPad(async (pin)=>{
+    if(!requirePresident('reset PIN')){ closeSheet(); return; }
+    const hash = await sha256Hex(pin);
+    const updated = { ...user, pinHash: hash };
+    await dbPut('users', updated);
+    const idx = STATE.cache.users.findIndex(u=>u.id===user.id);
+    if(idx>-1) STATE.cache.users[idx] = updated;
+    if(STATE.currentUser.id===user.id) STATE.currentUser = updated;
+    await logAudit('PIN changed', user.id, {resetBy: STATE.currentUser.name});
+    closeSheet();
+    toast('PIN reset for '+user.name, 'ok');
+  }, {mode:'set', exactLen:6, maxLen:6, minLen:6});
+}
+
+/* ---------------------------- AUTO-LOCK / ACTIVITY ---------------------------- */
+function trackActivity(){
+  STATE.lastActivity = Date.now();
+}
+['click','touchstart','keydown','scroll'].forEach(evt=>{
+  document.addEventListener(evt, trackActivity, {passive:true});
+});
+setInterval(()=>{
+  if(STATE.locked) return;
+  if(!STATE.mandal || !STATE.currentUser) return;
+  const mins = (Date.now() - STATE.lastActivity) / 60000;
+  if(STATE.autoLockMinutes>0 && mins >= STATE.autoLockMinutes){
+    lockApp();
+  }
+}, 15000);
+
+/* ---------------------------- INIT / BOOT ---------------------------- */
+async function boot(){
+  document.documentElement.setAttribute('data-theme', STATE.theme);
+  if(!STATE.mandal){
+    renderSetupWizard();
+    return;
+  }
+  if(!STATE.cache.users.length){
+    // Mandal exists but no users (edge case) — force setup of an owner user.
+    STATE._setupData = {
+      id: STATE.mandal.id, name: STATE.mandal.name, village: STATE.mandal.village, district: STATE.mandal.district,
+      year: STATE.mandal.year, president: STATE.mandal.president, vp: STATE.mandal.vp, secretary: STATE.mandal.secretary,
+      treasurer: STATE.mandal.treasurer, contact: STATE.mandal.contact||'', pledgedTotal: STATE.mandal.pledgedTotal||0
+    };
+    renderSetupRoleStep();
+    return;
+  }
+  if(!STATE.currentUser){
+    showLockScreen();
+    return;
+  }
+  document.documentElement.setAttribute('data-theme', STATE.theme);
+  renderShell();
+  navigateTo('dashboard');
+}
+async function init(){
+  try{
+    STATE.db = await openDatabase();
+    await loadAllData();
+    document.documentElement.setAttribute('data-theme', STATE.theme);
+    // boot() already handles every case (no mandal / no users / not logged in / ready) —
+    // avoid duplicating that branching logic here.
+    boot();
+  }catch(err){
+    console.error('DB init failed', err);
+    document.getElementById('app').innerHTML = `
+      <div class="screens" style="padding-top:80px;">
+        <div class="card center">
+          <div style="font-size:36px;">⚠️</div>
+          <h2>Storage unavailable</h2>
+          <p class="muted">MandalSetu needs IndexedDB to store your mandal's data securely. Please use a modern browser (Chrome, Firefox, Edge) with storage enabled, and try again.</p>
+        </div>
+      </div>`;
+  }
+}
+window.addEventListener('DOMContentLoaded', init);
+</script>
+
+</body>
+</html>
